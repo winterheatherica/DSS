@@ -4,18 +4,22 @@ using namespace std;
 
 int Aspect;
 float Factor[100][3][100];
+float Nilai[100][3];
 
 int Alt;
 float ArrAlt[100][100][100];
 float ArrAlt2[100][100][100];
 float ArrAlt3[100][100][100];
+float NilaiTotal[100][100];
+float NilaiAkhir[100];
+
 
 int main (){
 
     cin >> Aspect;
 
     for (int i=0; i < Aspect; i++){
-        cin >> Factor[i][0][0];
+        cin >> Factor[i][0][0] >> Nilai[i][0] >> Nilai[i][1] >> Nilai[i][2];
     }
 
     for (int i=0; i < Aspect; i++){
@@ -24,12 +28,12 @@ int main (){
         }
     }
 
-    for (int i=0; i < Aspect; i++){
-        for (int j=0; j < Factor[i][0][0]; j++){
-            cout << Factor[i][1][j] << " " << Factor[i][2][j] << endl;
-        }
-        cout << endl;
-    }
+    // for (int i=0; i < Aspect; i++){
+    //     for (int j=0; j < Factor[i][0][0]; j++){
+    //         cout << Factor[i][1][j] << " " << Factor[i][2][j] << endl;
+    //     }
+    //     cout << endl;
+    // }
 
     cin >> Alt;
 
@@ -41,15 +45,15 @@ int main (){
         }
     }
 
-    for (int i=0; i < Aspect; i++){
-        for (int j=0; j < Alt; j++){
-            for (int k=0; k < Factor[i][0][0]; k++){
-                cout << ArrAlt[i][j][k] << " ";
-            }
-            cout << endl;
-        }
-        cout << endl;
-    }
+    // for (int i=0; i < Aspect; i++){
+    //     for (int j=0; j < Alt; j++){
+    //         for (int k=0; k < Factor[i][0][0]; k++){
+    //             cout << ArrAlt[i][j][k] << " ";
+    //         }
+    //         cout << endl;
+    //     }
+    //     cout << endl;
+    // }
 
     for (int i=0; i < Aspect; i++){
         for (int j=0; j < Alt; j++){
@@ -59,15 +63,15 @@ int main (){
         }
     }
 
-    for (int i=0; i < Aspect; i++){
-        for (int j=0; j < Alt; j++){
-            for (int k=0; k < Factor[i][0][0]; k++){
-                cout << ArrAlt2[i][j][k] << " ";
-            }
-            cout << endl;
-        }
-        cout << endl;
-    }
+    // for (int i=0; i < Aspect; i++){
+    //     for (int j=0; j < Alt; j++){
+    //         for (int k=0; k < Factor[i][0][0]; k++){
+    //             cout << ArrAlt2[i][j][k] << " ";
+    //         }
+    //         cout << endl;
+    //     }
+    //     cout << endl;
+    // }
 
     for (int i=0; i < Aspect; i++){
         for (int j=0; j < Alt; j++){
@@ -95,16 +99,42 @@ int main (){
         }
     }
 
+    // for (int i=0; i < Aspect; i++){
+    //     for (int j=0; j < Alt; j++){
+    //         for (int k=0; k < Factor[i][0][0]; k++){
+    //             cout << ArrAlt3[i][j][k] << " ";
+    //         }
+    //         cout << endl;
+    //     }
+    //     cout << endl;
+    // }
+
     for (int i=0; i < Aspect; i++){
         for (int j=0; j < Alt; j++){
+            float jumlah_core = 0;
+            float jumlah_second = 0;
+            int frek_core = 0;
+            int frek_second = 0;
             for (int k=0; k < Factor[i][0][0]; k++){
-                cout << ArrAlt3[i][j][k] << " ";
+                if (Factor[i][2][k] == 1){
+                    jumlah_core = jumlah_core + ArrAlt3[i][j][k];
+                    frek_core++;
+                } else if (Factor[i][2][k] == 2){
+                    jumlah_second = jumlah_second + ArrAlt3[i][j][k];
+                    frek_second++;
+                }
             }
-            cout << endl;
+            NilaiTotal[j][i] = Nilai[i][1] * (jumlah_core/frek_core) + Nilai[i][2] * (jumlah_second/frek_second);
         }
-        cout << endl;
     }
 
-    
-
+    for (int i=0; i < Alt; i++){
+        float jumlah = 0;
+        for (int j=0; j < Aspect; j++){
+            jumlah = jumlah + Nilai[j][0] * NilaiTotal[i][j];
+            
+        }
+        NilaiAkhir[i] = jumlah;
+        cout << NilaiAkhir[i] << " ";
+    }
 }

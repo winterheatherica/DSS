@@ -34,14 +34,14 @@ int main (){
         }
     }
 
-    for (int i=0; i < alt; i++){
-        for (int j=0; j < krit; j++){
-            cout << arr3[i][j] << " ";
-        }
-        cout << endl;
-    }
+    // for (int i=0; i < alt; i++){
+    //     for (int j=0; j < krit; j++){
+    //         cout << arr3[i][j] << " ";
+    //     }
+    //     cout << endl;
+    // }
 
-    cout << endl;
+    // cout << endl;
 
     for (int i=0; i < krit; i++){
         float jumlah_i = 0;
@@ -53,14 +53,14 @@ int main (){
         }
     }
 
-    for (int i=0; i < alt; i++){
-        for (int j=0; j < krit; j++){
-            cout << arr4[i][j] << " ";
-        }
-        cout << endl;
-    }
+    // for (int i=0; i < alt; i++){
+    //     for (int j=0; j < krit; j++){
+    //         cout << arr4[i][j] << " ";
+    //     }
+    //     cout << endl;
+    // }
 
-    cout << endl;
+    // cout << endl;
 
     for (int i=0; i < alt; i++){
         for (int j=0; j < krit; j++){
@@ -68,14 +68,14 @@ int main (){
         }
     }
 
-    for (int i=0; i < alt; i++){
-        for (int j=0; j < krit; j++){
-            cout << arr5[i][j] << " ";
-        }
-        cout << endl;
-    }
+    // for (int i=0; i < alt; i++){
+    //     for (int j=0; j < krit; j++){
+    //         cout << arr5[i][j] << " ";
+    //     }
+    //     cout << endl;
+    // }
 
-    cout << endl;
+    // cout << endl;
 
     for (int i=0; i < alt; i++){
         arr6[i][0] = 0;
@@ -89,14 +89,14 @@ int main (){
         }
     }
 
-    for (int i=0; i < alt; i++){
-        for (int j=0; j < 2; j++){
-            cout << arr6[i][j] << " ";
-        }
-        cout << endl;
-    }
+    // for (int i=0; i < alt; i++){
+    //     for (int j=0; j < 2; j++){
+    //         cout << arr6[i][j] << " ";
+    //     }
+    //     cout << endl;
+    // }
 
-    cout << endl;
+    // cout << endl;
 
     for (int i=0; i < alt; i++){
         if (arr6[i][1] < min_s){
@@ -113,11 +113,11 @@ int main (){
         arr7[i] = arr6[i][0] + (min_s*jumlah_min_s)/(arr6[i][1]*jumlah_1_per_min_s);
     }
 
-    for (int i=0; i < alt; i++){
-        cout << arr7[i] << endl;
-    }
+    // for (int i=0; i < alt; i++){
+    //     cout << arr7[i] << endl;
+    // }
 
-    cout << endl;
+    // cout << endl;
 
     for (int i=0; i < alt; i++){
         if (arr7[i] > max_q){
@@ -130,7 +130,7 @@ int main (){
     }
 
     for (int i=0; i < alt; i++){
-        cout << arr8[i] << endl;
+        cout << arr8[i] << " ";
     }
 
 }
