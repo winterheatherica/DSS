@@ -61,7 +61,7 @@ int main(){
     cout << endl;
 
     for (int i = 0; i < kriteria; i++){
-        cout << arr4[i] << " ";
+        cout << arr4[i] << endl;
     }
 
     cout << endl;
@@ -78,7 +78,7 @@ int main(){
     cout << endl;
 
     for (int i = 0; i < alternatif; i++){
-        cout << arr5[i] << " ";
+        cout << arr5[i] << endl;
     }
 
     cout << endl;
@@ -100,7 +100,7 @@ int main(){
     cout << endl;
 
     for (int i = 0; i < alternatif; i++){
-        cout << arrakhir[i] << " ";
+        cout << arrakhir[i] << endl;
     }
 
 }
