@@ -61,55 +61,22 @@ class WPDataService
                     ac.alternative_id
             )
             SELECT 
-                alternative_id,
-                normalisasi_alternative AS Normalisasi_Alternative
+                an.alternative_id,
+                ta.alternative_name, -- Menambahkan kolom alternative_name
+                an.normalisasi_alternative AS Normalisasi_Alternative
             FROM 
-                Alternative_Normalisasi) as wp2_data'))
+                Alternative_Normalisasi an
+            JOIN 
+                tb_alternative ta ON an.alternative_id = ta.alternative_id) as wp2_data'))
             ->get();
     }
 
     public static function getWP3Data($history_id)
-    {
-        return DB::table(DB::raw('
-            (WITH Total_Normalisasi AS (
-                SELECT 
-                    SUM(normalisasi_alternative) AS total_normalisasi_alternative
-                FROM (
-                    SELECT 
-                        ac.alternative_id,
-                        EXP(SUM(LOG(POWER(ac.alternative_criteria_value, nc.normalisasi_criteria)))) AS normalisasi_alternative
-                    FROM 
-                        tb_alternative_criteria ac
-                    JOIN 
-                        (
-                            SELECT 
-                                cp.criteria_id,
-                                CASE
-                                    WHEN c.criteria_status = \'c\' THEN (cp.criteria_value * -1) / t.total_criteria_value
-                                    ELSE cp.criteria_value / t.total_criteria_value
-                                END AS normalisasi_criteria
-                            FROM 
-                                tb_criteria_proportion cp
-                            JOIN 
-                                tb_criteria c ON cp.criteria_id = c.criteria_id
-                            CROSS JOIN (
-                                SELECT 
-                                    SUM(criteria_value) AS total_criteria_value
-                                FROM 
-                                    tb_criteria_proportion
-                                WHERE 
-                                    history_id = ' . $history_id . '
-                            ) t
-                            WHERE 
-                                cp.history_id = ' . $history_id . '
-                        ) nc ON ac.criteria_id = nc.criteria_id
-                    GROUP BY 
-                        ac.alternative_id
-                ) AS subquery_total
-            )
+{
+    return DB::table(DB::raw('
+        (WITH Total_Normalisasi AS (
             SELECT 
-                subquery_final.alternative_id,
-                subquery_final.normalisasi_alternative / tn.total_normalisasi_alternative AS Hasil_Akhir
+                SUM(normalisasi_alternative) AS total_normalisasi_alternative
             FROM (
                 SELECT 
                     ac.alternative_id,
@@ -141,9 +108,50 @@ class WPDataService
                     ) nc ON ac.criteria_id = nc.criteria_id
                 GROUP BY 
                     ac.alternative_id
-            ) AS subquery_final
+            ) AS subquery_total
+        )
+        SELECT 
+            subquery_final.alternative_id,
+            ta.alternative_name, -- Menambahkan kolom alternative_name
+            subquery_final.normalisasi_alternative / tn.total_normalisasi_alternative AS Hasil_Akhir
+        FROM (
+            SELECT 
+                ac.alternative_id,
+                EXP(SUM(LOG(POWER(ac.alternative_criteria_value, nc.normalisasi_criteria)))) AS normalisasi_alternative
+            FROM 
+                tb_alternative_criteria ac
             JOIN 
-                Total_Normalisasi tn) as wp3_data'))
-            ->get();
-    }
+                (
+                    SELECT 
+                        cp.criteria_id,
+                        CASE
+                            WHEN c.criteria_status = \'c\' THEN (cp.criteria_value * -1) / t.total_criteria_value
+                            ELSE cp.criteria_value / t.total_criteria_value
+                        END AS normalisasi_criteria
+                    FROM 
+                        tb_criteria_proportion cp
+                    JOIN 
+                        tb_criteria c ON cp.criteria_id = c.criteria_id
+                    CROSS JOIN (
+                        SELECT 
+                            SUM(criteria_value) AS total_criteria_value
+                        FROM 
+                            tb_criteria_proportion
+                        WHERE 
+                            history_id = ' . $history_id . '
+                    ) t
+                    WHERE 
+                        cp.history_id = ' . $history_id . '
+                ) nc ON ac.criteria_id = nc.criteria_id
+            GROUP BY 
+                ac.alternative_id
+        ) AS subquery_final
+        JOIN 
+            Total_Normalisasi tn ON 1=1
+        JOIN 
+            tb_alternative ta ON subquery_final.alternative_id = ta.alternative_id
+        ) as wp3_data'))
+        ->get();
+}
+
 }

@@ -8,4 +8,5 @@ class Alternative extends Model
 {
     protected $table = 'tb_alternative';
     protected $primaryKey = 'alternative_id';
+    public $timestamps = false;
 }

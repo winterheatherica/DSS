@@ -1,8 +1,6 @@
-<!-- resources/views/data/detailed_history.blade.php -->
-
 <x-layout>
     <x-slot:title>{{ $title }}</x-slot:title>
-
+    
     <div class="my-8 flex justify-center">
         <table class="table-auto bg-gray-700 shadow-lg rounded-md font-medium">
             <thead>
@@ -64,6 +62,7 @@
                 @endforeach
             </tbody>
         </table>
+
     </div>
 
     <!-- WP2 Data -->
@@ -72,6 +71,7 @@
             <thead>
                 <tr class="bg-gray-700 text-sm text-white text-center">
                     <th class="border px-4 py-2">Alternative ID</th>
+                    <th class="border px-4 py-2">Alternative Name</th>
                     <th class="border px-4 py-2">Normalisasi Alternative</th>
                 </tr>
             </thead>
@@ -79,6 +79,7 @@
                 @foreach ($wp2_data as $data)
                     <tr class="bg-gray-500 text-white text-sm border text-center">
                         <td class="border px-4 py-2">{{ $data->alternative_id }}</td>
+                        <td class="border px-4 py-2">{{ $data->alternative_name }}</td>
                         <td class="border px-4 py-2">{{ $data->Normalisasi_Alternative }}</td>
                     </tr>
                 @endforeach
@@ -92,18 +93,21 @@
             <thead>
                 <tr class="bg-gray-700 text-sm text-white text-center">
                     <th class="border px-4 py-2">Alternative ID</th>
+                    <th class="border px-4 py-2">Alternative Name</th>
                     <th class="border px-4 py-2">Hasil Akhir</th>
+                    {{-- <th class="border px-4 py-2">Rank</th> --}}
                 </tr>
             </thead>
             <tbody>
                 @foreach ($wp3_data as $data)
                     <tr class="bg-gray-500 text-white text-sm border text-center">
                         <td class="border px-4 py-2">{{ $data->alternative_id }}</td>
+                        <td class="border px-4 py-2">{{ $data->alternative_name }}</td>
                         <td class="border px-4 py-2">{{ $data->Hasil_Akhir }}</td>
+                        {{-- <td class="border px-4 py-2">{{ $data->Rank }}</td> --}}
                     </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
-
 </x-layout>
