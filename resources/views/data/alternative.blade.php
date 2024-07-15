@@ -17,14 +17,23 @@
             <tbody>
                 @foreach ($total_alternative as $alternative)
                     <tr class="bg-gray-500 text-white text-sm border text-center">
-                        <td class="border px-4 py-2">{{$alternative ['alternative_id']}}</td>
-                        <td class="border px-4 py-2">{{$alternative ['alternative_name']}}</td>
+                        <td class="border px-4 py-2">{{$alternative['alternative_id']}}</td>
+                        <td class="border px-4 py-2">
+                            <span id="name-{{$alternative['alternative_id']}}">
+                                {{$alternative['alternative_name']}}
+                            </span>
+                            <form id="form-{{$alternative['alternative_id']}}" action="/update_alternative" method="POST" class="hidden">
+                                @csrf
+                                <input type="hidden" name="alternative_id" value="{{$alternative['alternative_id']}}">
+                                <input id="input-{{$alternative['alternative_id']}}" type="text" name="alternative_name" class="hidden bg-gray-300 text-black px-2 py-1 rounded-md">
+                            </form>
+                        </td>
                         <td class="border px-4 py-2">
                             <div class="flex items-center">
                                 <div class="hidden md:block">
                                     <div class="flex items-baseline space-x-4">
                                         <x-editanddelete href="/alternative/{{$alternative['alternative_id']}}">Lihat Detail</x-editanddelete>
-                                        <x-editanddelete href="/">Edit</x-editanddelete>
+                                        <x-editanddelete onclick="toggleEdit({{$alternative['alternative_id']}})" style="text-decoration: none; cursor: pointer;">Edit</x-editanddelete>
                                         <x-editanddelete href="/about">Delete</x-editanddelete>
                                     </div>
                                 </div>
@@ -36,4 +45,23 @@
         </table>
     </div>
 
+    <script>
+        function toggleEdit(alternativeId) {
+            let nameElement = document.getElementById(`name-${alternativeId}`);
+            let inputElement = document.getElementById(`input-${alternativeId}`);
+            let formElement = document.getElementById(`form-${alternativeId}`);
+            let buttonElement = event.target;
+
+            if (buttonElement.innerText === 'Edit') {
+                nameElement.classList.add('hidden');
+                inputElement.classList.remove('hidden');
+                inputElement.value = nameElement.innerText.trim();
+                formElement.classList.remove('hidden');
+                buttonElement.innerText = 'Save';
+            } else {
+                formElement.submit();
+            }
+        }
+    </script>
+    
 </x-layout>

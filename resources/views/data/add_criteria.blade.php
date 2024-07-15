@@ -1,6 +1,10 @@
 <x-layout>
     <x-slot:title>{{$title}}</x-slot:title>
 
+    <div class="flex justify-center text-white text-center">
+        <x-add href="/criteria">Kembali</x-add>
+    </div>
+
     <div class="my-8 flex justify-center">
         <form method="POST" action="/add_criteria">
             @csrf
@@ -37,7 +41,6 @@
         </form>
     </div>
 
-    <!-- Modal -->
     <div id="notificationModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="bg-white rounded-lg shadow-lg p-6 justify-center">
             <h2 id="modalTitle" class="text-xl font-bold mb-4"></h2>
