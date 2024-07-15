@@ -2,35 +2,37 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-
-use App\Services\WPDataService;
-
 use App\Models\History;
-use App\Models\Method;
+use App\Models\Alternative_Proportion;
+use App\Models\Criteria_Proportion;
+use App\Models\Alternative_Criteria;
 
+use Illuminate\Http\Request;
 
 class HistoryController extends Controller
 {
-    public function showDetailedHistory($history_id)
+    public function index()
     {
-        $detailed_history = DB::table('tb_history')
-            ->join('tb_method', 'tb_history.method_id', '=', 'tb_method.method_id')
-            ->select('tb_history.*', 'tb_method.method_name')
-            ->where('tb_history.history_id', $history_id)
-            ->first();
+        $history = History::with('method')->get();
 
-        $wp1_data = WPDataService::getWP1Data($history_id);
-        $wp2_data = WPDataService::getWP2Data($history_id);
-        $wp3_data = WPDataService::getWP3Data($history_id);
-
-        return view('data.detailed_history', [
-            'title' => "History {$detailed_history->case_name}",
-            'detailed_history' => $detailed_history,
-            'wp1_data' => $wp1_data,
-            'wp2_data' => $wp2_data,
-            'wp3_data' => $wp3_data,
-        ]);
+        return view('/data/history', compact('history'));
     }
+
+    public function show($history_id)
+    {
+        $detailed_history = History::with('method')->findOrFail($history_id);
+
+        // Ambil data dari tb_alternative_proportion berdasarkan history_id
+        $alternative_proportions = Alternative_Proportion::where('history_id', $history_id)
+            ->with('alternative')
+            ->get();
+
+        // Ambil data dari tb_criteria_proportion berdasarkan history_id
+        $criteria_proportions = Criteria_Proportion::where('history_id', $history_id)
+            ->with('criteria')
+            ->get();
+
+        return view('/data/detailed_history', compact('detailed_history', 'alternative_proportions', 'criteria_proportions'));
+    }
+
 }

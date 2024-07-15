@@ -8,4 +8,5 @@ class DSS_Method extends Model
 {
     protected $table = 'tb_method';
     protected $primaryKey = 'method_id';
+    public $timestamps = false;
 }

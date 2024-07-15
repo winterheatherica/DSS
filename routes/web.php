@@ -5,11 +5,14 @@ use App\Models\History;
 use App\Models\DSS_Method;
 use App\Models\Criteria;
 use App\Models\Alternative;
+
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+
 use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\AlternativeCriteriaController;
 
 Route::get('/', function () {
     return view('home', ['title' => 'Home Page']);
@@ -32,12 +35,11 @@ Route::get('/method', function () {
     return view('/data/method', ['title' => 'Method Page', 'total_method' => DSS_Method::all()]);
 });
 
-Route::get('/history', function () {
-    $history = History::with('method')->get();
-    return view('data.history', ['title' => 'History Page', 'history' => $history]);
-});
+Route::get('/history', [HistoryController::class, 'index'])->name('history.index');
+Route::get('/history/{history_id}', [HistoryController::class, 'show'])->name('history.show');
 
-Route::get('/history/{history_id}', [HistoryController::class, 'showDetailedHistory']);
+Route::get('/alternative/{alternative_id}/criteria/{criteria_id}', [AlternativeCriteriaController::class, 'show'])
+    ->name('alternative.criteria.show');
 
 Route::get('/criteria', function () {
     return view('/data/criteria', ['title' => 'Criteria Page', 'total_criteria' => Criteria::all()]);
