@@ -1,5 +1,5 @@
 <x-layout>
-    <x-slot:title>{{ $detailed_history->case_name }}</x-slot:title>
+    <x-slot:title>{{ $detailed_history->method->method_name}} : {{ $detailed_history->case_name }} - {{ $detailed_history->table_user->username}}</x-slot:title>
 
     <div class="my-8 flex justify-center">
         <table class="table-auto bg-gray-700 shadow-lg rounded-md font-medium">
@@ -7,7 +7,7 @@
                 <tr class="bg-gray-700 text-sm text-white text-center">
                     <th class="border px-4 py-2">History Id</th>
                     <th class="border px-4 py-2">Method</th>
-                    <th class="border px-4 py-2">User Id</th>
+                    <th class="border px-4 py-2">Creator</th>
                     <th class="border px-4 py-2">Case Name</th>
                     <th class="border px-4 py-2">Primary Weight</th>
                     <th class="border px-4 py-2">Secondary Weight</th>
@@ -16,9 +16,9 @@
             </thead>
             <tbody>
                 <tr class="bg-gray-500 text-white text-sm border text-center">
-                    <td class="border px-4 py-2">{{ $detailed_history->history_id }}</td>
-                    <td class="border px-4 py-2">{{ $detailed_history->method->method_name ?? 'Tidak Ada' }}</td>
-                    <td class="border px-4 py-2">{{ $detailed_history->user_id }}</td>
+                    <td class="border px-4 py-2">{{ $detailed_history->history_id}}</td>
+                    <td class="border px-4 py-2">{{ $detailed_history->method->method_name}}</td>
+                    <td class="border px-4 py-2">{{ $detailed_history->table_user->username}}</td>
                     <td class="border px-4 py-2">{{ $detailed_history->case_name }}</td>
                     <td class="border px-4 py-2">{{ $detailed_history->primary_weight ?? 'Tidak Ada' }}</td>
                     <td class="border px-4 py-2">{{ $detailed_history->secondary_weight ?? 'Tidak Ada' }}</td>
@@ -92,6 +92,8 @@
         </div>
     </div>
 
+
+    <!--Table Pemetaan Alternative dan Criteria-->
     <div class="my-8 flex justify-center">
         <table class="table-auto bg-gray-700 shadow-lg rounded-md font-medium">
             <thead>
@@ -121,4 +123,5 @@
             </tbody>
         </table>
     </div>
+    
 </x-layout>

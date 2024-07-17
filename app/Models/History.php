@@ -15,6 +15,11 @@ class History extends Model
         return $this->belongsTo(DSS_Method::class, 'method_id');
     }
 
+    public function table_user()
+    {
+        return $this->belongsTo(Table_User::class, 'user_id');
+    }
+
     public function alternative_proportions()
     {
         return $this->hasMany(Alternative_Proportion::class, 'history_id');

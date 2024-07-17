@@ -38,8 +38,7 @@ Route::get('/method', function () {
 Route::get('/history', [HistoryController::class, 'index'])->name('history.index');
 Route::get('/history/{history_id}', [HistoryController::class, 'show'])->name('history.show');
 
-Route::get('/alternative/{alternative_id}/criteria/{criteria_id}', [AlternativeCriteriaController::class, 'show'])
-    ->name('alternative.criteria.show');
+Route::get('/alternative/{alternative_id}/criteria/{criteria_id}', [AlternativeCriteriaController::class, 'show'])->name('alternative.criteria.show');
 
 Route::get('/criteria', function () {
     return view('/data/criteria', ['title' => 'Criteria Page', 'total_criteria' => Criteria::all()]);

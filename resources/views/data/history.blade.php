@@ -7,7 +7,7 @@
                 <tr class="bg-gray-700 text-sm text-white text-center">
                     <th class="border px-4 py-2">History Id</th>
                     <th class="border px-4 py-2">Method</th>
-                    <th class="border px-4 py-2">User Id</th>
+                    <th class="border px-4 py-2">Creator</th>
                     <th class="border px-4 py-2">Case</th>
                     <th class="border px-4 py-2">Primary</th>
                     <th class="border px-4 py-2">Secondary</th>
@@ -19,7 +19,7 @@
                     <tr class="bg-gray-500 text-white text-sm border text-center">
                         <td class="border px-4 py-2">{{ $detailed_history->history_id }}</td>
                         <td class="border px-4 py-2">{{ $detailed_history->method->method_name }}</td>
-                        <td class="border px-4 py-2">{{ $detailed_history->user_id }}</td>
+                        <td class="border px-4 py-2">{{ $detailed_history->table_user->username}}</td>
                         <td class="border px-4 py-2">{{ $detailed_history->case_name }}</td>
                         <td class="border px-4 py-2">{{ $detailed_history->primary_weight ?? 'Tidak Ada' }}</td>
                         <td class="border px-4 py-2">{{ $detailed_history->secondary_weight ?? 'Tidak Ada' }}</td>
