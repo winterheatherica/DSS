@@ -46,6 +46,7 @@
                         <tr class="bg-gray-700 text-sm text-white text-center">
                             <th class="border px-4 py-2">Alternative ID</th>
                             <th class="border px-4 py-2">Alternative Name</th>
+                            {{-- <th class="border px-4 py-2">arr2</th> --}}
                         </tr>
                     </thead>
                     <tbody>
@@ -53,6 +54,17 @@
                             <tr class="bg-gray-500 text-white text-sm border text-center">
                                 <td class="border px-4 py-2">{{ $data->alternative_id }}</td>
                                 <td class="border px-4 py-2">{{ $data->alternative->alternative_name }}</td>
+                                {{-- @foreach ($alternative_proportions as $index => $data)
+                                    <tr class="bg-gray-500 text-white text-sm border text-center">
+                                        <td class="border px-4 py-2">{{ $data->alternative_id }}</td>
+                                        <td class="border px-4 py-2">{{ $data->alternative->alternative_name }}</td>
+                                        <td class="border px-4 py-2">
+                                            @foreach ($arr2[$index] as $value)
+                                                {{ $value }}
+                                            @endforeach
+                                        </td>
+                                    </tr>
+                                @endforeach --}}
                             </tr>
                         @endforeach
                     </tbody>
@@ -67,10 +79,13 @@
                             <th class="border px-4 py-2">Criteria Name</th>
                             <th class="border px-4 py-2">Criteria Status</th>
                             <th class="border px-4 py-2">Criteria Value</th>
+                            {{-- <th class="border px-4 py-2">Arr1</th> --}}
+                            {{-- <th class="border px-4 py-2">Arr4</th> --}}
+                            {{-- <th class="border px-4 py-2">Arr3</th> --}}
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($criteria_proportions as $data)
+                        @foreach ($criteria_proportions as $index => $data)
                             <tr class="bg-gray-500 text-white text-sm border text-center">
                                 <td class="border px-4 py-2">{{ $data->criteria_id }}</td>
                                 <td class="border px-4 py-2">{{ $data->criteria->criteria_name }}</td>
@@ -84,6 +99,9 @@
                                     @endif
                                 </td>
                                 <td class="border px-4 py-2">{{ $data->criteria_value }}</td>
+                                {{-- <td class="border px-4 py-2">{{ $arr1[$index] ?? '' }}</td> --}}
+                                {{-- <td class="border px-4 py-2">{{ $arr4[$index] ?? '' }}</td> --}}
+                                {{-- <td class="border px-4 py-2">{{ $arr3[$index] ?? '' }}</td> --}}
                             </tr>
                         @endforeach
                     </tbody>
@@ -92,13 +110,11 @@
         </div>
     </div>
 
-
-    <!--Table Pemetaan Alternative dan Criteria-->
     <div class="my-8 flex justify-center">
         <table class="table-auto bg-gray-700 shadow-lg rounded-md font-medium">
             <thead>
                 <tr class="bg-gray-700 text-sm text-white text-center">
-                    <th class="border px-4 py-2">Nama Alternative</th>
+                    <th class="border px-4 py-2">Alternative Name</th>
                     @foreach ($criteria_proportions as $criteria)
                         <th class="border px-4 py-2">{{ $criteria->criteria->criteria_name }}</th>
                     @endforeach
@@ -123,5 +139,29 @@
             </tbody>
         </table>
     </div>
+
+    <div class="my-8 flex justify-center">
+        <table class="table-auto bg-gray-700 shadow-lg rounded-md font-medium">
+            <thead>
+                <tr class="bg-gray-700 text-sm text-white text-center">
+                    <th class="border px-4 py-2">Alternative Name</th>
+                    <th class="border px-4 py-2">SAW</th>
+                    <th class="border px-4 py-2">WP</th>
+                    <th class="border px-4 py-2">WASPAS</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($alternative_proportions as $index => $alternative)
+                    <tr class="bg-gray-500 text-white text-sm border text-center">
+                        <td class="border px-4 py-2">{{ $alternative->alternative->alternative_name }}</td>
+                        <td class="border px-4 py-2">{{ $SAW[$index] }}</td>
+                        <td class="border px-4 py-2">{{ $WP[$index] }}</td>
+                        <td class="border px-4 py-2">{{ $WASPAS[$index] }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    
     
 </x-layout>

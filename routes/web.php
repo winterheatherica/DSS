@@ -32,7 +32,7 @@ Route::get('/post/{id}', function ($id) {
 });
 
 Route::get('/method', function () {
-    return view('/data/method', ['title' => 'Method Page', 'total_method' => DSS_Method::all()]);
+    return view('/data/method', ['title' => 'Method List', 'total_method' => DSS_Method::all()]);
 });
 
 Route::get('/history', [HistoryController::class, 'index'])->name('history.index');
@@ -41,7 +41,7 @@ Route::get('/history/{history_id}', [HistoryController::class, 'show'])->name('h
 Route::get('/alternative/{alternative_id}/criteria/{criteria_id}', [AlternativeCriteriaController::class, 'show'])->name('alternative.criteria.show');
 
 Route::get('/criteria', function () {
-    return view('/data/criteria', ['title' => 'Criteria Page', 'total_criteria' => Criteria::all()]);
+    return view('/data/criteria', ['title' => 'Criteria List', 'total_criteria' => Criteria::all()]);
 });
 
 Route::get('/add_criteria', function () {
@@ -58,7 +58,7 @@ Route::post('/add_criteria', function (Request $request) {
 });
 
 Route::get('/alternative', function () {
-    return view('/data/alternative', ['title' => 'Alternative Page', 'total_alternative' => Alternative::all()]);
+    return view('/data/alternative', ['title' => 'Alternative List', 'total_alternative' => Alternative::all()]);
 });
 
 Route::post('/update_alternative', function (Request $request) {
