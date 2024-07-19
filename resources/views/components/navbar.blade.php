@@ -14,7 +14,7 @@
                 <x-nav-link href="/history" :active="request()->is('history') || request()->is('history/*')">History</x-nav-link>
                 <x-nav-link href="/criteria" :active="request()->is('criteria') || request()->is('criteria/*')">Criteria</x-nav-link>
                 <x-nav-link href="/alternative" :active="request()->is('alternative') || request()->is('alternative/*')">Alternative</x-nav-link>
-                <x-nav-link href="/test" :active="request()->is('test')">Test</x-nav-link>   
+                <x-nav-link href="/calculation" :active="request()->is('calculation')">Calculation</x-nav-link>   
                 </div>
             </div>
             </div>
@@ -78,7 +78,7 @@
             <x-nav-link href="/history" :active="request()->is('history') || request()->is('history/*')">History</x-nav-link>
             <x-nav-link href="/criteria" :active="request()->is('criteria')">Criteria</x-nav-link>
             <x-nav-link href="/alternative" :active="request()->is('alternative') || request()->is('alternative/*')">Alternative</x-nav-link>
-            <x-nav-link href="/test" :active="request()->is('test')">Test</x-nav-link>   
+            <x-nav-link href="/calculation" :active="request()->is('calculation')">Calculation</x-nav-link>   
         </div>
         <div class="border-t border-gray-700 pb-3 pt-4">
             <div class="flex items-center px-5">

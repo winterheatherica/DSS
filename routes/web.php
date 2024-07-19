@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\AlternativeCriteriaController;
+use App\Http\Controllers\CalculationController;
 
 Route::get('/', function () {
     return view('home', ['title' => 'Home Page']);
@@ -37,11 +38,18 @@ Route::get('/method', function () {
 
 Route::get('/history', [HistoryController::class, 'index'])->name('history.index');
 Route::get('/history/{history_id}', [HistoryController::class, 'show'])->name('history.show');
+Route::get('/history/{history_id}/copy', [HistoryController::class, 'copy'])->name('history.copy');
 
 Route::get('/alternative/{alternative_id}/criteria/{criteria_id}', [AlternativeCriteriaController::class, 'show'])->name('alternative.criteria.show');
 
 Route::get('/criteria', function () {
     return view('/data/criteria', ['title' => 'Criteria List', 'total_criteria' => Criteria::all()]);
+});
+
+Route::get('/criteria', function () {
+    $title = 'Criteria List';
+    $total_criteria = Criteria::paginate(4);
+    return view('/data/criteria', compact('title', 'total_criteria'));
 });
 
 Route::get('/add_criteria', function () {
@@ -58,7 +66,9 @@ Route::post('/add_criteria', function (Request $request) {
 });
 
 Route::get('/alternative', function () {
-    return view('/data/alternative', ['title' => 'Alternative List', 'total_alternative' => Alternative::all()]);
+    $title = 'Alternative List';
+    $total_alternative = Alternative::paginate(4);
+    return view('/data/alternative', compact('title', 'total_alternative'));
 });
 
 Route::post('/update_alternative', function (Request $request) {
@@ -167,27 +177,38 @@ Route::get('/criteria/{id}', function ($id) {
 
 Route::post('/save_criteria_value', function (Request $request) {
     $alternative_id = $request->input('alternative_id');
-    $criteria_id = $request->input('criteria_id');
-    $criteria_value = $request->input('criteria_value');
+    $criteria_values = $request->input('criteria_values', []);
 
-    $existing = DB::table('tb_alternative_criteria')
-        ->where('alternative_id', $alternative_id)
-        ->where('criteria_id', $criteria_id)
-        ->first();
+    foreach ($criteria_values as $criteria_id => $criteria_value) {
+        if ($criteria_id) { // Pastikan criteria_id tidak null
+            $existing = DB::table('tb_alternative_criteria')
+                ->where('alternative_id', $alternative_id)
+                ->where('criteria_id', $criteria_id)
+                ->first();
 
-    if ($existing) {
-        DB::table('tb_alternative_criteria')
-            ->where('alternative_id', $alternative_id)
-            ->where('criteria_id', $criteria_id)
-            ->update(['alternative_criteria_value' => $criteria_value]);
-    } else {
-        DB::table('tb_alternative_criteria')
-            ->insert([
-                'alternative_id' => $alternative_id,
-                'criteria_id' => $criteria_id,
-                'alternative_criteria_value' => $criteria_value,
-            ]);
+            if ($existing) {
+                DB::table('tb_alternative_criteria')
+                    ->where('alternative_id', $alternative_id)
+                    ->where('criteria_id', $criteria_id)
+                    ->update(['alternative_criteria_value' => $criteria_value]);
+            } else {
+                DB::table('tb_alternative_criteria')
+                    ->insert([
+                        'alternative_id' => $alternative_id,
+                        'criteria_id' => $criteria_id,
+                        'alternative_criteria_value' => $criteria_value,
+                    ]);
+            }
+        }
     }
 
     return redirect()->back()->with('success', 'Data berhasil disimpan');
 });
+
+Route::get('/calculation', [CalculationController::class, 'showForm'])->name('calculation.form');
+// Route::post('/calculation', [CalculationController::class, 'store'])->name('calculation.store');
+Route::post('/calculation/store', [CalculationController::class, 'store'])->name('calculation.store');
+
+Route::get('/history/{history_id}/edit', [HistoryController::class, 'editshow'])->name('history.editshow');
+Route::put('/history/{history_id}', 'HistoryController@update')->name('history.update');
+

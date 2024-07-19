@@ -60,6 +60,11 @@
         </table>
     </div>
 
+    <div class="flex justify-center mt-4">
+        {{ $total_criteria->links() }}
+    </div>
+
+
     <script>
         function toggleEditName(criteriaId) {
             let nameElement = document.getElementById(`name-${criteriaId}`);

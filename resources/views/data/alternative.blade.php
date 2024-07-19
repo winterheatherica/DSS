@@ -45,6 +45,10 @@
         </table>
     </div>
 
+    <div class="flex justify-center mt-4">
+        {{ $total_alternative->links() }}
+    </div>
+
     <script>
         function toggleEdit(alternativeId) {
             let nameElement = document.getElementById(`name-${alternativeId}`);
@@ -63,5 +67,5 @@
             }
         }
     </script>
-    
+
 </x-layout>

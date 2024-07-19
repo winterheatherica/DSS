@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Alternative_Criteria extends Model
 {
     protected $table = 'tb_alternative_criteria';
+    public $timestamps = false;
 
     public function alternative()
     {

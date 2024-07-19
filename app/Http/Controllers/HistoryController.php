@@ -6,8 +6,12 @@ use App\Models\History;
 use App\Models\Alternative_Proportion;
 use App\Models\Criteria_Proportion;
 use App\Models\Alternative_Criteria;
+use App\Models\DSS_Method;
+use App\Models\Alternative;
+use App\Models\Criteria;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HistoryController extends Controller
 {
@@ -116,4 +120,115 @@ class HistoryController extends Controller
 
         return view('/data/detailed_history', compact('SAW', 'WP', 'WASPAS', 'detailed_history', 'alternative_proportions', 'criteria_proportions'));
     }
+
+    public function copy($history_id)
+    {
+        DB::beginTransaction();
+        try {
+            \Log::info('Mulai proses penyalinan history dengan history_id: ' . $history_id);
+
+            $original_history = History::findOrFail($history_id);
+            \Log::info('History asli ditemukan: ' . json_encode($original_history));
+
+            $new_history = $original_history->replicate();
+            $new_history->save();
+            \Log::info('History baru berhasil disimpan dengan history_id: ' . $new_history->history_id);
+
+            $alternative_proportions = Alternative_Proportion::where('history_id', $history_id)->get();
+            foreach ($alternative_proportions as $alternative_proportion) {
+                $new_alternative_proportion = $alternative_proportion->replicate();
+                $new_alternative_proportion->history_id = $new_history->history_id;
+                $new_alternative_proportion->save();
+                \Log::info('Alternative proportion berhasil disimpan dengan history_id: ' . $new_alternative_proportion->history_id);
+            }
+            \Log::info('Alternative proportions berhasil disalin.');
+
+            $criteria_proportions = Criteria_Proportion::where('history_id', $history_id)->get();
+            foreach ($criteria_proportions as $criteria_proportion) {
+                $new_criteria_proportion = $criteria_proportion->replicate();
+                $new_criteria_proportion->history_id = $new_history->history_id;
+                $new_criteria_proportion->save();
+                \Log::info('Criteria proportion berhasil disimpan dengan history_id: ' . $new_criteria_proportion->history_id);
+            }
+            \Log::info('Criteria proportions berhasil disalin.');
+
+            DB::commit();
+            \Log::info('Transaksi berhasil dikomit.');
+
+            return redirect('/history')->with('success', 'History berhasil disalin.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            \Log::error('Error saat menyalin history: '.$e->getMessage());
+            return redirect('/history')->with('error', 'Terjadi kesalahan saat menyalin history.');
+        }
+    }
+
+    public function editshow($history_id)
+    {
+        $detailed_history = History::with(['alternative_proportions', 'criteria_proportions', 'method', 'table_user'])->findOrFail($history_id);
+        $methods = DSS_Method::all();
+        $total_alternative = Alternative::all();
+        $total_criteria = Criteria::all();
+
+        return view('data.edit_history', compact('detailed_history', 'methods', 'total_alternative', 'total_criteria'));
+    }
+
+
+    public function update(Request $request, $history_id)
+    {
+        // Validasi data
+        $request->validate([
+            'method_id' => 'required|exists:tb_method,method_id',
+            'case_name' => 'required|string|max:100',
+            'primary_weight' => 'nullable|numeric',
+            'secondary_weight' => 'nullable|numeric',
+            'alternatives' => 'required|array',
+            'alternatives.*' => 'exists:tb_alternative,alternative_id',
+            'criteria' => 'required|array',
+            'criteria.*' => 'exists:tb_criteria,criteria_id',
+            'criteria_value' => 'required|array',
+        ]);
+
+        // Update data di tabel tb_history
+        $history = History::findOrFail($history_id);
+        $history->method_id = $request->input('method_id');
+        $history->user_id = 1; // Anggap user_id = 1
+        $history->case_name = $request->input('case_name');
+        $history->primary_weight = $request->input('primary_weight') == '-' ? null : $request->input('primary_weight');
+        $history->secondary_weight = $request->input('secondary_weight') == '-' ? null : $request->input('secondary_weight');
+        $history->save();
+
+        // Hapus data lama di tabel tb_alternative_proportion dan tb_criteria_proportion
+        Alternative_Proportion::where('history_id', $history_id)->delete();
+        Criteria_Proportion::where('history_id', $history_id)->delete();
+
+        // Simpan data baru ke tabel tb_alternative_proportion
+        foreach ($request->input('alternatives') as $alternative_id) {
+            $alternativeProportion = new Alternative_Proportion();
+            $alternativeProportion->history_id = $history_id;
+            $alternativeProportion->alternative_id = $alternative_id;
+            $alternativeProportion->final_score = null;
+            $alternativeProportion->final_rank = null;
+            $alternativeProportion->save();
+        }
+
+        // Simpan data baru ke tabel tb_criteria_proportion
+        $selectedCriteria = $request->input('criteria');
+        $criteriaValues = $request->input('criteria_value');
+
+        foreach ($selectedCriteria as $index => $criteria_id) {
+            if (isset($criteriaValues[$criteria_id])) {
+                $criteriaProportion = new Criteria_Proportion();
+                $criteriaProportion->history_id = $history_id;
+                $criteriaProportion->criteria_id = $criteria_id;
+                $criteriaProportion->criteria_value = $criteriaValues[$criteria_id];
+                $criteriaProportion->criteria_priority = null; // Atau sesuai dengan logika Anda
+                $criteriaProportion->save();
+            }
+        }
+
+        // Redirect atau tampilkan pesan sukses
+        return redirect()->route('calculation.form')->with('success', 'Calculation updated successfully!');
+    }
+
 }

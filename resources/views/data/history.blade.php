@@ -28,7 +28,11 @@
                                 <div class="hidden md:block">
                                     <div class="flex items-baseline space-x-4">
                                         <x-editanddelete href="/history/{{ $detailed_history->history_id }}">Lihat Detail</x-editanddelete>
-                                        <x-editanddelete href="/">Edit</x-editanddelete>
+                                        {{-- <x-editanddelete href="/history/{history_id}/edit">Edit</x-editanddelete> --}}
+                                        <x-editanddelete href="{{ route('history.editshow', ['history_id' => $detailed_history->history_id]) }}">Edit</x-editanddelete>
+                                        <x-editanddelete href="{{ route('history.copy', ['history_id' => $detailed_history->history_id]) }}">
+                                            Copy
+                                        </x-editanddelete>                                        
                                         <x-editanddelete href="/">Delete</x-editanddelete>
                                     </div>
                                 </div>
