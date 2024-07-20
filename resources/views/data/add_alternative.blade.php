@@ -2,7 +2,7 @@
     <x-slot:title>{{$title}}</x-slot:title>
 
     <div class="flex justify-center text-white text-center">
-        <x-add href="/alternative">Kembali</x-add>
+        <x-add href="/alternative?page={{ request()->get('page', 1) }}">Kembali</x-add>
     </div>
 
     <div class="my-8 flex justify-center">
@@ -32,9 +32,11 @@
 
     <div id="notificationModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="bg-white rounded-lg shadow-lg p-6">
-            <h2 id="modalTitle" class="text-xl font-bold mb-4"></h2>
-            <p id="modalMessage" class="mb-4"></p>
-            <button onclick="closeModal()" class="px-4 py-2 bg-gray-500 text-white rounded-md">Tutup</button>
+            <h2 id="modalTitle" class="text-xl font-bold mb-4 text-center"></h2>
+            <p id="modalMessage" class="mb-4 text-center"></p>
+            <div class="flex justify-center">
+                <button onclick="closeModal()" class="px-4 py-2 bg-gray-500 text-white rounded-md mr-2 text-sm hover:bg-gray-700" style="text-decoration: none; cursor: pointer;">Tutup</button>
+            </div>
         </div>
     </div>
 

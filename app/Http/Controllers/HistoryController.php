@@ -176,7 +176,6 @@ class HistoryController extends Controller
 
     public function update(Request $request, $history_id)
     {
-        // Validasi data
         $request->validate([
             'method_id' => 'required|exists:tb_method,method_id',
             'case_name' => 'required|string|max:100',
@@ -189,7 +188,6 @@ class HistoryController extends Controller
             'criteria_value' => 'required|array',
         ]);
 
-        // Update data di tabel tb_history
         $history = History::findOrFail($history_id);
         $history->method_id = $request->input('method_id');
         $history->user_id = 1; // Anggap user_id = 1
@@ -198,11 +196,9 @@ class HistoryController extends Controller
         $history->secondary_weight = $request->input('secondary_weight') == '-' ? null : $request->input('secondary_weight');
         $history->save();
 
-        // Hapus data lama di tabel tb_alternative_proportion dan tb_criteria_proportion
         Alternative_Proportion::where('history_id', $history_id)->delete();
         Criteria_Proportion::where('history_id', $history_id)->delete();
 
-        // Simpan data baru ke tabel tb_alternative_proportion
         foreach ($request->input('alternatives') as $alternative_id) {
             $alternativeProportion = new Alternative_Proportion();
             $alternativeProportion->history_id = $history_id;
@@ -212,7 +208,6 @@ class HistoryController extends Controller
             $alternativeProportion->save();
         }
 
-        // Simpan data baru ke tabel tb_criteria_proportion
         $selectedCriteria = $request->input('criteria');
         $criteriaValues = $request->input('criteria_value');
 
@@ -227,7 +222,6 @@ class HistoryController extends Controller
             }
         }
 
-        // Redirect atau tampilkan pesan sukses
         return redirect()->route('calculation.form')->with('success', 'Calculation updated successfully!');
     }
 

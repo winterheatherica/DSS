@@ -31,7 +31,6 @@ class CalculationController extends Controller
     
     public function store(Request $request)
     {
-        // Validasi data
         $request->validate([
             'method_id' => 'required|exists:tb_method,method_id',
             'case_name' => 'required|string|max:100',
@@ -44,7 +43,6 @@ class CalculationController extends Controller
             'criteria_value' => 'required|array',
         ]);
 
-        // Simpan data ke tabel tb_history
         $history = new History();
         $history->method_id = $request->input('method_id');
         $history->user_id = 1; // Anggap user_id = 1
@@ -53,10 +51,8 @@ class CalculationController extends Controller
         $history->secondary_weight = $request->input('secondary_weight') == '-' ? null : $request->input('secondary_weight');
         $history->save();
 
-        // Dapatkan ID history yang baru saja disimpan
         $history_id = $history->history_id;
 
-        // Simpan data ke tabel tb_alternative_proportion
         foreach ($request->input('alternatives') as $alternative_id) {
             $alternativeProportion = new Alternative_Proportion();
             $alternativeProportion->history_id = $history_id;
@@ -66,7 +62,6 @@ class CalculationController extends Controller
             $alternativeProportion->save();
         }
 
-        // Simpan data ke tabel tb_criteria_proportion
         $selectedCriteria = $request->input('criteria');
         $criteriaValues = $request->input('criteria_value');
 
@@ -81,7 +76,6 @@ class CalculationController extends Controller
             }
         }
 
-        // Redirect atau tampilkan pesan sukses
         return redirect()->route('calculation.form')->with('success', 'Calculation stored successfully!');
     }
 

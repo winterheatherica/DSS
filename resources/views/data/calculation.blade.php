@@ -133,10 +133,9 @@
             methodDropdown.addEventListener('change', toggleWeightFields);
             toggleWeightFields();
 
-            // Show input fields only when their corresponding checkbox is checked
             criteriaCheckboxes.forEach(checkbox => {
                 const criteriaValueInput = checkbox.closest('tr').querySelector('input[name^="criteria_value"]');
-                criteriaValueInput.disabled = !checkbox.checked;  // Disable input by default
+                criteriaValueInput.disabled = !checkbox.checked;
                 
                 checkbox.addEventListener('change', function() {
                     if (checkbox.checked) {
@@ -145,11 +144,10 @@
                     } else {
                         criteriaValueInput.disabled = true;
                         criteriaValueInput.required = false;
-                        criteriaValueInput.value = '';  // Clear the input value if unchecked
+                        criteriaValueInput.value = '';
                     }
                 });
             });
-
         });
     </script>
     

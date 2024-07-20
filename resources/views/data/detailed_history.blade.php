@@ -46,7 +46,6 @@
                         <tr class="bg-gray-700 text-sm text-white text-center">
                             <th class="border px-4 py-2">Alternative ID</th>
                             <th class="border px-4 py-2">Alternative Name</th>
-                            {{-- <th class="border px-4 py-2">arr2</th> --}}
                         </tr>
                     </thead>
                     <tbody>
@@ -54,17 +53,6 @@
                             <tr class="bg-gray-500 text-white text-sm border text-center">
                                 <td class="border px-4 py-2">{{ $data->alternative_id }}</td>
                                 <td class="border px-4 py-2">{{ $data->alternative->alternative_name }}</td>
-                                {{-- @foreach ($alternative_proportions as $index => $data)
-                                    <tr class="bg-gray-500 text-white text-sm border text-center">
-                                        <td class="border px-4 py-2">{{ $data->alternative_id }}</td>
-                                        <td class="border px-4 py-2">{{ $data->alternative->alternative_name }}</td>
-                                        <td class="border px-4 py-2">
-                                            @foreach ($arr2[$index] as $value)
-                                                {{ $value }}
-                                            @endforeach
-                                        </td>
-                                    </tr>
-                                @endforeach --}}
                             </tr>
                         @endforeach
                     </tbody>
@@ -79,9 +67,6 @@
                             <th class="border px-4 py-2">Criteria Name</th>
                             <th class="border px-4 py-2">Criteria Status</th>
                             <th class="border px-4 py-2">Criteria Value</th>
-                            {{-- <th class="border px-4 py-2">Arr1</th> --}}
-                            {{-- <th class="border px-4 py-2">Arr4</th> --}}
-                            {{-- <th class="border px-4 py-2">Arr3</th> --}}
                         </tr>
                     </thead>
                     <tbody>
@@ -99,9 +84,6 @@
                                     @endif
                                 </td>
                                 <td class="border px-4 py-2">{{ $data->criteria_value }}</td>
-                                {{-- <td class="border px-4 py-2">{{ $arr1[$index] ?? '' }}</td> --}}
-                                {{-- <td class="border px-4 py-2">{{ $arr4[$index] ?? '' }}</td> --}}
-                                {{-- <td class="border px-4 py-2">{{ $arr3[$index] ?? '' }}</td> --}}
                             </tr>
                         @endforeach
                     </tbody>

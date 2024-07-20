@@ -2,8 +2,8 @@
     <x-slot:title>{{$title}}</x-slot:title>
 
     <div class="flex justify-center text-white text-center">
-        <x-add href="/alternative">Kembali</x-add>
-    </div>
+        <x-add href="/alternative?page={{ request()->get('page', 1) }}">Kembali</x-add>
+    </div>    
 
     <div class="my-8 flex justify-center text-white text-center">
         <x-add onclick="toggleEditMode()">Edit Mode</x-add>
@@ -55,6 +55,9 @@
                 if (isEditMode) {
                     input.classList.remove('hidden');
                 } else {
+                    if (input.value.trim() === '') {
+                        input.value = '';
+                    }
                     input.classList.add('hidden');
                 }
             });

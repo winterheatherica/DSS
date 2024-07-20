@@ -14,6 +14,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\AlternativeCriteriaController;
 use App\Http\Controllers\CalculationController;
+use App\Http\Controllers\AlternativeController;
+use App\Http\Controllers\CriteriaController;
+
 
 Route::get('/', function () {
     return view('home', ['title' => 'Home Page']);
@@ -48,7 +51,7 @@ Route::get('/criteria', function () {
 
 Route::get('/criteria', function () {
     $title = 'Criteria List';
-    $total_criteria = Criteria::paginate(4);
+    $total_criteria = Criteria::paginate(6);
     return view('/data/criteria', compact('title', 'total_criteria'));
 });
 
@@ -65,40 +68,10 @@ Route::post('/add_criteria', function (Request $request) {
     return redirect('/add_criteria')->with('success', 'Criteria added successfully!');
 });
 
-Route::get('/alternative', function () {
-    $title = 'Alternative List';
-    $total_alternative = Alternative::paginate(4);
-    return view('/data/alternative', compact('title', 'total_alternative'));
-});
 
-Route::post('/update_alternative', function (Request $request) {
-    $alternative_id = $request->input('alternative_id');
-    $alternative_name = $request->input('alternative_name');
-
-    DB::table('tb_alternative')
-        ->where('alternative_id', $alternative_id)
-        ->update(['alternative_name' => $alternative_name]);
-
-    return redirect('/alternative')->with('success', 'Alternative updated successfully!');
-});
 
 Route::get('/add_alternative', function () {
     return view('/data/add_alternative', ['title' => 'Add Alternative Page', 'total_alternative' => Alternative::all()]);
-});
-
-Route::post('/update_criteria', function (Request $request) {
-    $criteria_id = $request->input('criteria_id');
-    $criteria_name = $request->input('criteria_name');
-    $criteria_status = $request->input('criteria_status');
-
-    DB::table('tb_criteria')
-        ->where('criteria_id', $criteria_id)
-        ->update([
-            'criteria_name' => $criteria_name,
-            'criteria_status' => $criteria_status,
-        ]);
-
-    return redirect('/criteria')->with('success', 'Criteria updated successfully!');
 });
 
 Route::post('/update_criteria_name', function (Request $request) {
@@ -180,24 +153,31 @@ Route::post('/save_criteria_value', function (Request $request) {
     $criteria_values = $request->input('criteria_values', []);
 
     foreach ($criteria_values as $criteria_id => $criteria_value) {
-        if ($criteria_id) { // Pastikan criteria_id tidak null
-            $existing = DB::table('tb_alternative_criteria')
-                ->where('alternative_id', $alternative_id)
-                ->where('criteria_id', $criteria_id)
-                ->first();
-
-            if ($existing) {
+        if ($criteria_id) {
+            if ($criteria_value === null || $criteria_value === '') {
                 DB::table('tb_alternative_criteria')
                     ->where('alternative_id', $alternative_id)
                     ->where('criteria_id', $criteria_id)
-                    ->update(['alternative_criteria_value' => $criteria_value]);
+                    ->delete();
             } else {
-                DB::table('tb_alternative_criteria')
-                    ->insert([
-                        'alternative_id' => $alternative_id,
-                        'criteria_id' => $criteria_id,
-                        'alternative_criteria_value' => $criteria_value,
-                    ]);
+                $existing = DB::table('tb_alternative_criteria')
+                    ->where('alternative_id', $alternative_id)
+                    ->where('criteria_id', $criteria_id)
+                    ->first();
+
+                if ($existing) {
+                    DB::table('tb_alternative_criteria')
+                        ->where('alternative_id', $alternative_id)
+                        ->where('criteria_id', $criteria_id)
+                        ->update(['alternative_criteria_value' => $criteria_value]);
+                } else {
+                    DB::table('tb_alternative_criteria')
+                        ->insert([
+                            'alternative_id' => $alternative_id,
+                            'criteria_id' => $criteria_id,
+                            'alternative_criteria_value' => $criteria_value,
+                        ]);
+                }
             }
         }
     }
@@ -205,10 +185,55 @@ Route::post('/save_criteria_value', function (Request $request) {
     return redirect()->back()->with('success', 'Data berhasil disimpan');
 });
 
+Route::post('/save_alternative_value', function (Request $request) {
+    $criteria_id = $request->input('criteria_id');
+    $criteria_values = $request->input('criteria_values', []);
+
+    foreach ($criteria_values as $alternative_id => $criteria_value) {
+        if ($alternative_id) {
+            if ($criteria_value === null || $criteria_value === '') {
+                DB::table('tb_alternative_criteria')
+                    ->where('criteria_id', $criteria_id)
+                    ->where('alternative_id', $alternative_id)
+                    ->delete();
+            } else {
+                $existing = DB::table('tb_alternative_criteria')
+                    ->where('criteria_id', $criteria_id)
+                    ->where('alternative_id', $alternative_id)
+                    ->first();
+
+                if ($existing) {
+                    DB::table('tb_alternative_criteria')
+                        ->where('criteria_id', $criteria_id)
+                        ->where('alternative_id', $alternative_id)
+                        ->update(['alternative_criteria_value' => $criteria_value]);
+                } else {
+                    DB::table('tb_alternative_criteria')
+                        ->insert([
+                            'criteria_id' => $criteria_id,
+                            'alternative_id' => $alternative_id,
+                            'alternative_criteria_value' => $criteria_value,
+                        ]);
+                }
+            }
+        }
+    }
+
+    return redirect()->back()->with('success', 'Data berhasil disimpan');
+});
+
+
 Route::get('/calculation', [CalculationController::class, 'showForm'])->name('calculation.form');
-// Route::post('/calculation', [CalculationController::class, 'store'])->name('calculation.store');
 Route::post('/calculation/store', [CalculationController::class, 'store'])->name('calculation.store');
 
 Route::get('/history/{history_id}/edit', [HistoryController::class, 'editshow'])->name('history.editshow');
 Route::put('/history/{history_id}', 'HistoryController@update')->name('history.update');
 
+Route::get('/alternative', [AlternativeController::class, 'index'])->name('alternative.index');
+Route::post('/update_alternative', [AlternativeController::class, 'update']);
+Route::delete('/alternative/{id}', [AlternativeController::class, 'destroy']);
+
+Route::get('/criteria', [CriteriaController::class, 'index'])->name('criteria.index');
+Route::post('/update_criteria_name', [CriteriaController::class, 'updateName']);
+Route::post('/update_criteria_status', [CriteriaController::class, 'updateStatus']);
+Route::delete('/criteria/{id}', [CriteriaController::class, 'destroy']);
