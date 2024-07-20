@@ -39,9 +39,7 @@ Route::get('/method', function () {
     return view('/data/method', ['title' => 'Method List', 'total_method' => DSS_Method::all()]);
 });
 
-Route::get('/history', [HistoryController::class, 'index'])->name('history.index');
-Route::get('/history/{history_id}', [HistoryController::class, 'show'])->name('history.show');
-Route::get('/history/{history_id}/copy', [HistoryController::class, 'copy'])->name('history.copy');
+
 
 Route::get('/alternative/{alternative_id}/criteria/{criteria_id}', [AlternativeCriteriaController::class, 'show'])->name('alternative.criteria.show');
 
@@ -67,8 +65,6 @@ Route::post('/add_criteria', function (Request $request) {
 
     return redirect('/add_criteria')->with('success', 'Criteria added successfully!');
 });
-
-
 
 Route::get('/add_alternative', function () {
     return view('/data/add_alternative', ['title' => 'Add Alternative Page', 'total_alternative' => Alternative::all()]);
@@ -222,12 +218,15 @@ Route::post('/save_alternative_value', function (Request $request) {
     return redirect()->back()->with('success', 'Data berhasil disimpan');
 });
 
-
 Route::get('/calculation', [CalculationController::class, 'showForm'])->name('calculation.form');
 Route::post('/calculation/store', [CalculationController::class, 'store'])->name('calculation.store');
 
+Route::get('/history', [HistoryController::class, 'index'])->name('history.index');
+Route::get('/history/{history_id}', [HistoryController::class, 'show'])->name('history.show');
+Route::get('/history/{history_id}/copy', [HistoryController::class, 'copy'])->name('history.copy');
 Route::get('/history/{history_id}/edit', [HistoryController::class, 'editshow'])->name('history.editshow');
-Route::put('/history/{history_id}', 'HistoryController@update')->name('history.update');
+Route::put('/history/{history_id}', [HistoryController::class, 'update'])->name('history.update');
+Route::delete('/history/{history_id}', [HistoryController::class, 'destroy'])->name('history.destroy');
 
 Route::get('/alternative', [AlternativeController::class, 'index'])->name('alternative.index');
 Route::post('/update_alternative', [AlternativeController::class, 'update']);

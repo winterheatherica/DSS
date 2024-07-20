@@ -174,6 +174,57 @@ class HistoryController extends Controller
     }
 
 
+    // public function update(Request $request, $history_id)
+    // {
+    //     $request->validate([
+    //         'method_id' => 'required|exists:tb_method,method_id',
+    //         'case_name' => 'required|string|max:100',
+    //         'primary_weight' => 'nullable|numeric',
+    //         'secondary_weight' => 'nullable|numeric',
+    //         'alternatives' => 'required|array',
+    //         'alternatives.*' => 'exists:tb_alternative,alternative_id',
+    //         'criteria' => 'required|array',
+    //         'criteria.*' => 'exists:tb_criteria,criteria_id',
+    //         'criteria_value' => 'required|array',
+    //     ]);
+
+    //     $history = History::findOrFail($history_id);
+    //     $history->method_id = $request->input('method_id');
+    //     $history->user_id = 1; // Anggap user_id = 1
+    //     $history->case_name = $request->input('case_name');
+    //     $history->primary_weight = $request->input('primary_weight') == '-' ? null : $request->input('primary_weight');
+    //     $history->secondary_weight = $request->input('secondary_weight') == '-' ? null : $request->input('secondary_weight');
+    //     $history->save();
+
+    //     Alternative_Proportion::where('history_id', $history_id)->delete();
+    //     Criteria_Proportion::where('history_id', $history_id)->delete();
+
+    //     foreach ($request->input('alternatives') as $alternative_id) {
+    //         $alternativeProportion = new Alternative_Proportion();
+    //         $alternativeProportion->history_id = $history_id;
+    //         $alternativeProportion->alternative_id = $alternative_id;
+    //         $alternativeProportion->final_score = null;
+    //         $alternativeProportion->final_rank = null;
+    //         $alternativeProportion->save();
+    //     }
+
+    //     $selectedCriteria = $request->input('criteria');
+    //     $criteriaValues = $request->input('criteria_value');
+
+    //     foreach ($selectedCriteria as $index => $criteria_id) {
+    //         if (isset($criteriaValues[$criteria_id])) {
+    //             $criteriaProportion = new Criteria_Proportion();
+    //             $criteriaProportion->history_id = $history_id;
+    //             $criteriaProportion->criteria_id = $criteria_id;
+    //             $criteriaProportion->criteria_value = $criteriaValues[$criteria_id];
+    //             $criteriaProportion->criteria_priority = null; // Atau sesuai dengan logika Anda
+    //             $criteriaProportion->save();
+    //         }
+    //     }
+
+    //     return redirect()->route('calculation.form')->with('success', 'Calculation updated successfully!');
+    // }
+
     public function update(Request $request, $history_id)
     {
         $request->validate([
@@ -188,41 +239,94 @@ class HistoryController extends Controller
             'criteria_value' => 'required|array',
         ]);
 
-        $history = History::findOrFail($history_id);
-        $history->method_id = $request->input('method_id');
-        $history->user_id = 1; // Anggap user_id = 1
-        $history->case_name = $request->input('case_name');
-        $history->primary_weight = $request->input('primary_weight') == '-' ? null : $request->input('primary_weight');
-        $history->secondary_weight = $request->input('secondary_weight') == '-' ? null : $request->input('secondary_weight');
-        $history->save();
+        DB::beginTransaction();
+        try {
+            \Log::info('Mulai proses update history dengan history_id: ' . $history_id);
 
-        Alternative_Proportion::where('history_id', $history_id)->delete();
-        Criteria_Proportion::where('history_id', $history_id)->delete();
+            $history = History::findOrFail($history_id);
+            $history->method_id = $request->input('method_id');
+            $history->case_name = $request->input('case_name');
+            $history->primary_weight = $request->input('primary_weight') == '-' ? null : $request->input('primary_weight');
+            $history->secondary_weight = $request->input('secondary_weight') == '-' ? null : $request->input('secondary_weight');
+            $history->save();
+            \Log::info('History berhasil diupdate: ' . json_encode($history));
 
-        foreach ($request->input('alternatives') as $alternative_id) {
-            $alternativeProportion = new Alternative_Proportion();
-            $alternativeProportion->history_id = $history_id;
-            $alternativeProportion->alternative_id = $alternative_id;
-            $alternativeProportion->final_score = null;
-            $alternativeProportion->final_rank = null;
-            $alternativeProportion->save();
-        }
+            // Delete existing alternative proportions related to this history
+            Alternative_Proportion::where('history_id', $history_id)->delete();
+            \Log::info('Alternative proportions berhasil dihapus.');
 
-        $selectedCriteria = $request->input('criteria');
-        $criteriaValues = $request->input('criteria_value');
-
-        foreach ($selectedCriteria as $index => $criteria_id) {
-            if (isset($criteriaValues[$criteria_id])) {
-                $criteriaProportion = new Criteria_Proportion();
-                $criteriaProportion->history_id = $history_id;
-                $criteriaProportion->criteria_id = $criteria_id;
-                $criteriaProportion->criteria_value = $criteriaValues[$criteria_id];
-                $criteriaProportion->criteria_priority = null; // Atau sesuai dengan logika Anda
-                $criteriaProportion->save();
+            // Insert new alternative proportions
+            foreach ($request->input('alternatives') as $alternative_id) {
+                $alternativeProportion = new Alternative_Proportion();
+                $alternativeProportion->history_id = $history_id;
+                $alternativeProportion->alternative_id = $alternative_id;
+                $alternativeProportion->final_score = null;
+                $alternativeProportion->final_rank = null;
+                $alternativeProportion->save();
+                \Log::info('Alternative proportion berhasil disimpan dengan history_id: ' . $alternativeProportion->history_id);
             }
-        }
+            \Log::info('Alternative proportions berhasil disalin.');
 
-        return redirect()->route('calculation.form')->with('success', 'Calculation updated successfully!');
+            // Delete existing criteria proportions related to this history
+            Criteria_Proportion::where('history_id', $history_id)->delete();
+            \Log::info('Criteria proportions berhasil dihapus.');
+
+            // Insert new criteria proportions
+            $selectedCriteria = $request->input('criteria');
+            $criteriaValues = $request->input('criteria_value');
+
+            foreach ($selectedCriteria as $index => $criteria_id) {
+                if (isset($criteriaValues[$criteria_id])) {
+                    $criteriaProportion = new Criteria_Proportion();
+                    $criteriaProportion->history_id = $history_id;
+                    $criteriaProportion->criteria_id = $criteria_id;
+                    $criteriaProportion->criteria_value = $criteriaValues[$criteria_id];
+                    $criteriaProportion->criteria_priority = null; // Or according to your logic
+                    $criteriaProportion->save();
+                    \Log::info('Criteria proportion berhasil disimpan dengan history_id: ' . $criteriaProportion->history_id);
+                }
+            }
+            \Log::info('Criteria proportions berhasil disalin.');
+
+            DB::commit();
+            \Log::info('Transaksi berhasil dikomit.');
+
+            return redirect('/history')->with('success', 'Calculation updated successfully!');
+        } catch (\Exception $e) {
+            DB::rollback();
+            \Log::error('Error saat mengupdate history: '.$e->getMessage());
+            return redirect()->route('history.editshow', ['history_id' => $history_id])->with('error', 'Terjadi kesalahan saat mengupdate history.');
+        }
     }
+
+    public function destroy($history_id)
+    {
+        DB::beginTransaction();
+        try {
+            \Log::info('Mulai proses penghapusan history dengan history_id: ' . $history_id);
+
+            // Delete alternative proportions related to this history
+            Alternative_Proportion::where('history_id', $history_id)->delete();
+            \Log::info('Alternative proportions berhasil dihapus.');
+
+            // Delete criteria proportions related to this history
+            Criteria_Proportion::where('history_id', $history_id)->delete();
+            \Log::info('Criteria proportions berhasil dihapus.');
+
+            // Delete the history itself
+            History::findOrFail($history_id)->delete();
+            \Log::info('History berhasil dihapus.');
+
+            DB::commit();
+            \Log::info('Transaksi berhasil dikomit.');
+
+            return redirect('/history')->with('success', 'History berhasil dihapus.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            \Log::error('Error saat menghapus history: '.$e->getMessage());
+            return redirect('/history')->with('error', 'Terjadi kesalahan saat menghapus history.');
+        }
+    }
+
 
 }

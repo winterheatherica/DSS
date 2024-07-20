@@ -1,6 +1,10 @@
 <x-layout>
     <x-slot:title>Edit History -> {{ $detailed_history->method->method_name }} : {{ $detailed_history->case_name }} - {{ $detailed_history->table_user->username }}</x-slot:title>
 
+    <div class="flex justify-center text-white text-center">
+        <x-add href="/history">Back</x-add>
+    </div>
+
     <div class="my-8 flex justify-center">
         <form method="POST" action="{{ route('history.update', ['history_id' => $detailed_history->history_id]) }}">
             @csrf
@@ -127,15 +131,15 @@
             const primaryWeightRow = document.getElementById('primary-weight-row');
             const secondaryWeightRow = document.getElementById('secondary-weight-row');
             const criteriaCheckboxes = document.querySelectorAll('input[name="criteria[]"]');
-        
+
             function toggleWeightFields() {
                 const selectedMethod = methodDropdown.options[methodDropdown.selectedIndex].text;
                 if (selectedMethod !== 'PM') {
-                    primaryWeightRow.innerHTML = '<td class="border px-4 py-2">Primary Weight</td><td class="border px-4 py-2"><input type="text" name="primary_weight" class="text-black px-2 py-1 rounded-md"></td>';
-                    secondaryWeightRow.innerHTML = '<td class="border px-4 py-2">Secondary Weight</td><td class="border px-4 py-2"><input type="text" name="secondary_weight" class="text-black px-2 py-1 rounded-md"></td>';
+                    primaryWeightRow.innerHTML = '<td class="border px-4 py-2">Primary Weight</td><td class="border px-4 py-2">-</td>';
+                    secondaryWeightRow.innerHTML = '<td class="border px-4 py-2">Secondary Weight</td><td class="border px-4 py-2">-</td>';
                 } else {
-                    primaryWeightRow.innerHTML = '';
-                    secondaryWeightRow.innerHTML = '';
+                    primaryWeightRow.innerHTML = '<td class="border px-4 py-2">Primary Weight</td><td class="border px-4 py-2"><input type="text" name="primary_weight" class="text-black px-2 py-1 rounded-md" required></td>';
+                    secondaryWeightRow.innerHTML = '<td class="border px-4 py-2">Secondary Weight</td><td class="border px-4 py-2"><input type="text" name="secondary_weight" class="text-black px-2 py-1 rounded-md" required></td>';
                 }
             }
 
