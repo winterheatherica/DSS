@@ -33,13 +33,13 @@
                         </td>
                     </tr>
                     <tr class="bg-gray-500 text-white text-sm border text-center" id="primary-weight-row">
-                        <td class="border px-4 py-2">Primary Weight</td>
+                        <td class="border px-4 py-2">WSM</td>
                         <td class="border px-4 py-2">
                             <input type="text" name="primary_weight" class="text-black px-2 py-1 rounded-md" required>
                         </td>
                     </tr>
                     <tr class="bg-gray-500 text-white text-sm border text-center" id="secondary-weight-row">
-                        <td class="border px-4 py-2">Secondary Weight</td>
+                        <td class="border px-4 py-2">WPM</td>
                         <td class="border px-4 py-2">
                             <input type="text" name="secondary_weight" class="text-black px-2 py-1 rounded-md" required>
                         </td>
@@ -126,7 +126,6 @@
         </div>
     </div>
 
-    <!-- Notification Modal for Negative Weights -->
     <div id="notificationModalNegative" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="bg-white rounded-lg shadow-lg p-6">
             <h2 class="text-xl font-bold mb-4 text-center">Warning</h2>
@@ -147,11 +146,11 @@
             function toggleWeightFields() {
                 const selectedMethod = methodDropdown.options[methodDropdown.selectedIndex].text;
                 if (selectedMethod !== 'WASPAS') {
-                    primaryWeightRow.innerHTML = '<td class="border px-4 py-2">Primary Weight</td><td class="border px-4 py-2">-</td>';
-                    secondaryWeightRow.innerHTML = '<td class="border px-4 py-2">Secondary Weight</td><td class="border px-4 py-2">-</td>';
+                    primaryWeightRow.innerHTML = '<td class="border px-4 py-2">WSM</td><td class="border px-4 py-2">-</td>';
+                    secondaryWeightRow.innerHTML = '<td class="border px-4 py-2">WPM</td><td class="border px-4 py-2">-</td>';
                 } else {
-                    primaryWeightRow.innerHTML = '<td class="border px-4 py-2">Primary Weight</td><td class="border px-4 py-2"><input type="text" name="primary_weight" class="text-black px-2 py-1 rounded-md" required></td>';
-                    secondaryWeightRow.innerHTML = '<td class="border px-4 py-2">Secondary Weight</td><td class="border px-4 py-2"><input type="text" name="secondary_weight" class="text-black px-2 py-1 rounded-md" required></td>';
+                    primaryWeightRow.innerHTML = '<td class="border px-4 py-2">WSM</td><td class="border px-4 py-2"><input type="text" name="primary_weight" class="text-black px-2 py-1 rounded-md" required></td>';
+                    secondaryWeightRow.innerHTML = '<td class="border px-4 py-2">WPM</td><td class="border px-4 py-2"><input type="text" name="secondary_weight" class="text-black px-2 py-1 rounded-md" required></td>';
                 }
             }
         

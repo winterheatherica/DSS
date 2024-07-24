@@ -9,8 +9,8 @@
                     <th class="border px-4 py-2">Method</th>
                     <th class="border px-4 py-2">Creator</th>
                     <th class="border px-4 py-2">Case Name</th>
-                    <th class="border px-4 py-2">Primary Weight</th>
-                    <th class="border px-4 py-2">Secondary Weight</th>
+                    <th class="border px-4 py-2">WSM</th>
+                    <th class="border px-4 py-2">WPM</th>
                     <th class="border px-4 py-2">Action</th>
                 </tr>
             </thead>
@@ -246,7 +246,7 @@
             <thead>
                 <tr class="bg-gray-700 text-sm text-white text-center">
                     <th class="border px-4 py-2">Alternative Name</th>
-                    <th class="border px-4 py-2">SAW</th>
+                    <th class="border px-4 py-2">WSM</th>
                 </tr>
             </thead>
             <tbody>
@@ -300,7 +300,7 @@
             <thead>
                 <tr class="bg-gray-700 text-sm text-white text-center">
                     <th class="border px-4 py-2">Alternative Name</th>
-                    <th class="border px-4 py-2">WP</th>
+                    <th class="border px-4 py-2">WPM</th>
                 </tr>
             </thead>
             <tbody>
@@ -324,9 +324,9 @@
             <thead>
                 <tr class="bg-gray-700 text-sm text-white text-center">
                     <th class="border px-4 py-2">Alternative Name</th>
-                    <th class="border px-4 py-2">SAW * {{ $detailed_history->primary_weight }}</th>
+                    <th class="border px-4 py-2">WSM * {{ $detailed_history->primary_weight }}</th>
                     <th class="border px-4 py-2">+</th>
-                    <th class="border px-4 py-2">WP * {{ $detailed_history->secondary_weight }}</th>
+                    <th class="border px-4 py-2">WPM * {{ $detailed_history->secondary_weight }}</th>
                     <th class="border px-4 py-2">=</th>
                     <th class="border px-4 py-2">WASPAS</th>
                     <th class="border px-4 py-2">Rank</th>
@@ -349,7 +349,6 @@
         
     </div>
 
-    <!-- Modal for Deletion Confirmation -->
     <div id="notificationModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="bg-white rounded-lg shadow-lg p-6">
             <h2 id="modalTitle" class="text-xl font-bold mb-4 text-center">Konfirmasi Penghapusan</h2>
@@ -367,7 +366,6 @@
         </div>
     </div>
 
-    <!-- Modal for Copy Confirmation -->
     <div id="copyModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="bg-white rounded-lg shadow-lg p-6">
             <h2 class="text-xl font-bold mb-4 text-center">Konfirmasi Penyalinan</h2>

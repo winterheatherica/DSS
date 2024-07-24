@@ -43,13 +43,13 @@
                             </td>
                         </tr>
                         <tr class="bg-gray-500 text-white text-sm border text-center" id="primary-weight-row">
-                            <td class="border px-4 py-2">Primary Weight</td>
+                            <td class="border px-4 py-2">WSM</td>
                             <td class="border px-4 py-2">
                                 <input type="text" name="primary_weight" value="{{ $detailed_history->primary_weight }}" class="text-black px-2 py-1 rounded-md" required>
                             </td>
                         </tr>
                         <tr class="bg-gray-500 text-white text-sm border text-center" id="secondary-weight-row">
-                            <td class="border px-4 py-2">Secondary Weight</td>
+                            <td class="border px-4 py-2">WPM</td>
                             <td class="border px-4 py-2">
                                 <input type="text" name="secondary_weight" value="{{ $detailed_history->secondary_weight }}" class="text-black px-2 py-1 rounded-md" required>
                             </td>
@@ -157,11 +157,11 @@
             function toggleWeightFields() {
                 const selectedMethod = methodDropdown.options[methodDropdown.selectedIndex].text;
                 if (selectedMethod !== 'WASPAS') {
-                    primaryWeightRow.innerHTML = '<td class="border px-4 py-2">Primary Weight</td><td class="border px-4 py-2"><input type="text" name="primary_weight" value="{{ old('primary_weight', $detailed_history->primary_weight) }}" class="text-black px-2 py-1 rounded-md" required></td>';
-                    secondaryWeightRow.innerHTML = '<td class="border px-4 py-2">Secondary Weight</td><td class="border px-4 py-2"><input type="text" name="secondary_weight" value="{{ old('secondary_weight', $detailed_history->secondary_weight) }}" class="text-black px-2 py-1 rounded-md" required></td>';
+                    primaryWeightRow.innerHTML = '<td class="border px-4 py-2">WSM</td><td class="border px-4 py-2"><input type="text" name="primary_weight" value="{{ old('primary_weight', $detailed_history->primary_weight) }}" class="text-black px-2 py-1 rounded-md" required></td>';
+                    secondaryWeightRow.innerHTML = '<td class="border px-4 py-2">WPM</td><td class="border px-4 py-2"><input type="text" name="secondary_weight" value="{{ old('secondary_weight', $detailed_history->secondary_weight) }}" class="text-black px-2 py-1 rounded-md" required></td>';
                 } else {
-                    primaryWeightRow.innerHTML = '<td class="border px-4 py-2">Primary Weight</td><td class="border px-4 py-2"><input type="text" name="primary_weight" value="{{ old('primary_weight', $detailed_history->primary_weight) }}" class="text-black px-2 py-1 rounded-md" required></td>';
-                    secondaryWeightRow.innerHTML = '<td class="border px-4 py-2">Secondary Weight</td><td class="border px-4 py-2"><input type="text" name="secondary_weight" value="{{ old('secondary_weight', $detailed_history->secondary_weight) }}" class="text-black px-2 py-1 rounded-md" required></td>';
+                    primaryWeightRow.innerHTML = '<td class="border px-4 py-2">WSM</td><td class="border px-4 py-2"><input type="text" name="primary_weight" value="{{ old('primary_weight', $detailed_history->primary_weight) }}" class="text-black px-2 py-1 rounded-md" required></td>';
+                    secondaryWeightRow.innerHTML = '<td class="border px-4 py-2">WPM</td><td class="border px-4 py-2"><input type="text" name="secondary_weight" value="{{ old('secondary_weight', $detailed_history->secondary_weight) }}" class="text-black px-2 py-1 rounded-md" required></td>';
                 }
             }
 
