@@ -43,9 +43,12 @@ class HistoryController extends Controller
         $minORmax = array_fill(0, $Crit, 0);
         $arr3 = [];
         $arr4 = [];
+        $arr5 = [];
+        $arr6 = [];
         $SAW = [];
         $WP = [];
         $WASPAS = [];
+        $final_rank = [];
 
         foreach ($criteria_proportions as $i => $criteria) {
             $arr1[$i] = $criteria->criteria_value;
@@ -101,6 +104,7 @@ class HistoryController extends Controller
         foreach ($alternative_proportions as $i => $alternative) {
             $jumlah = 0;
             foreach ($criteria_proportions as $j => $criteria) {
+                $arr5[$i][$j] = $arr4[$j] * $arr3[$i][$j];
                 $jumlah += $arr4[$j] * $arr3[$i][$j];
             }
             $SAW[$i] = $jumlah;
@@ -109,16 +113,31 @@ class HistoryController extends Controller
         foreach ($alternative_proportions as $i => $alternative) {
             $kali = 1;
             foreach ($criteria_proportions as $j => $criteria) {
+                $arr6[$i][$j] = pow($arr3[$i][$j], $arr4[$j]);
                 $kali *= pow($arr3[$i][$j], $arr4[$j]);
             }
             $WP[$i] = $kali;
         }
 
         foreach ($alternative_proportions as $i => $alternative) {
-            $WASPAS[$i] = 0.5 * $SAW[$i] + 0.5 * $WP[$i];
+            $WASPAS[$i] = $detailed_history->primary_weight * $SAW[$i] + $detailed_history->secondary_weight * $WP[$i];
         }
 
-        return view('/data/detailed_history', compact('SAW', 'WP', 'WASPAS', 'detailed_history', 'alternative_proportions', 'criteria_proportions'));
+        $waspas_with_index = [];
+        foreach ($WASPAS as $index => $value) {
+            $waspas_with_index[] = ['index' => $index, 'value' => $value];
+        }
+
+        usort($waspas_with_index, function ($a, $b) {
+            return $b['value'] <=> $a['value'];
+        });
+
+        $final_rank = array_fill(0, count($WASPAS), 0);
+        foreach ($waspas_with_index as $rank => $item) {
+            $final_rank[$item['index']] = $rank + 1;
+        }
+
+        return view('/data/detailed_history', compact('arr3', 'arr4', 'arr5', 'arr6', 'SAW', 'WP', 'WASPAS', 'final_rank', 'detailed_history', 'alternative_proportions', 'criteria_proportions'));
     }
 
     public function copy($history_id)
@@ -173,58 +192,6 @@ class HistoryController extends Controller
         return view('data.edit_history', compact('detailed_history', 'methods', 'total_alternative', 'total_criteria'));
     }
 
-
-    // public function update(Request $request, $history_id)
-    // {
-    //     $request->validate([
-    //         'method_id' => 'required|exists:tb_method,method_id',
-    //         'case_name' => 'required|string|max:100',
-    //         'primary_weight' => 'nullable|numeric',
-    //         'secondary_weight' => 'nullable|numeric',
-    //         'alternatives' => 'required|array',
-    //         'alternatives.*' => 'exists:tb_alternative,alternative_id',
-    //         'criteria' => 'required|array',
-    //         'criteria.*' => 'exists:tb_criteria,criteria_id',
-    //         'criteria_value' => 'required|array',
-    //     ]);
-
-    //     $history = History::findOrFail($history_id);
-    //     $history->method_id = $request->input('method_id');
-    //     $history->user_id = 1; // Anggap user_id = 1
-    //     $history->case_name = $request->input('case_name');
-    //     $history->primary_weight = $request->input('primary_weight') == '-' ? null : $request->input('primary_weight');
-    //     $history->secondary_weight = $request->input('secondary_weight') == '-' ? null : $request->input('secondary_weight');
-    //     $history->save();
-
-    //     Alternative_Proportion::where('history_id', $history_id)->delete();
-    //     Criteria_Proportion::where('history_id', $history_id)->delete();
-
-    //     foreach ($request->input('alternatives') as $alternative_id) {
-    //         $alternativeProportion = new Alternative_Proportion();
-    //         $alternativeProportion->history_id = $history_id;
-    //         $alternativeProportion->alternative_id = $alternative_id;
-    //         $alternativeProportion->final_score = null;
-    //         $alternativeProportion->final_rank = null;
-    //         $alternativeProportion->save();
-    //     }
-
-    //     $selectedCriteria = $request->input('criteria');
-    //     $criteriaValues = $request->input('criteria_value');
-
-    //     foreach ($selectedCriteria as $index => $criteria_id) {
-    //         if (isset($criteriaValues[$criteria_id])) {
-    //             $criteriaProportion = new Criteria_Proportion();
-    //             $criteriaProportion->history_id = $history_id;
-    //             $criteriaProportion->criteria_id = $criteria_id;
-    //             $criteriaProportion->criteria_value = $criteriaValues[$criteria_id];
-    //             $criteriaProportion->criteria_priority = null; // Atau sesuai dengan logika Anda
-    //             $criteriaProportion->save();
-    //         }
-    //     }
-
-    //     return redirect()->route('calculation.form')->with('success', 'Calculation updated successfully!');
-    // }
-
     public function update(Request $request, $history_id)
     {
         $request->validate([
@@ -251,11 +218,9 @@ class HistoryController extends Controller
             $history->save();
             \Log::info('History berhasil diupdate: ' . json_encode($history));
 
-            // Delete existing alternative proportions related to this history
             Alternative_Proportion::where('history_id', $history_id)->delete();
             \Log::info('Alternative proportions berhasil dihapus.');
 
-            // Insert new alternative proportions
             foreach ($request->input('alternatives') as $alternative_id) {
                 $alternativeProportion = new Alternative_Proportion();
                 $alternativeProportion->history_id = $history_id;
@@ -267,11 +232,9 @@ class HistoryController extends Controller
             }
             \Log::info('Alternative proportions berhasil disalin.');
 
-            // Delete existing criteria proportions related to this history
             Criteria_Proportion::where('history_id', $history_id)->delete();
             \Log::info('Criteria proportions berhasil dihapus.');
 
-            // Insert new criteria proportions
             $selectedCriteria = $request->input('criteria');
             $criteriaValues = $request->input('criteria_value');
 
@@ -305,15 +268,12 @@ class HistoryController extends Controller
         try {
             \Log::info('Mulai proses penghapusan history dengan history_id: ' . $history_id);
 
-            // Delete alternative proportions related to this history
             Alternative_Proportion::where('history_id', $history_id)->delete();
             \Log::info('Alternative proportions berhasil dihapus.');
 
-            // Delete criteria proportions related to this history
             Criteria_Proportion::where('history_id', $history_id)->delete();
             \Log::info('Criteria proportions berhasil dihapus.');
 
-            // Delete the history itself
             History::findOrFail($history_id)->delete();
             \Log::info('History berhasil dihapus.');
 
@@ -327,6 +287,5 @@ class HistoryController extends Controller
             return redirect('/history')->with('error', 'Terjadi kesalahan saat menghapus history.');
         }
     }
-
 
 }

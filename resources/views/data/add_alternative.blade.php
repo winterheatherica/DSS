@@ -67,4 +67,5 @@
             document.getElementById('notificationModal').classList.add('hidden');
         }
     </script>
+    
 </x-layout>

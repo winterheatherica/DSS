@@ -18,10 +18,13 @@
                         <td class="border px-4 py-2">
                             <select id="method-dropdown" name="method_id" class="text-black px-2 py-1 rounded-md" required>
                                 @foreach ($methods as $method)
-                                    <option value="{{ $method->method_id }}">{{ $method->method_name }}</option>
+                                    <option value="{{ $method->method_id }}"
+                                        @if ($method->method_id == 5) selected @endif>
+                                        {{ $method->method_name }}
+                                    </option>
                                 @endforeach
-                            </select>                            
-                        </td>
+                            </select>
+                        </td>             
                     </tr>
                     <tr class="bg-gray-500 text-white text-sm border text-center">
                         <td class="border px-4 py-2">Case Name</td>
@@ -110,7 +113,29 @@
                 <button type="submit" class="rounded-md px-3 py-2 text-white text-sm bg-gray-500 hover:bg-gray-700">Mulai Hitung</button>
             </div>
         </form>
-    </div> 
+    </div>
+
+    <!-- Notification Modal for Positive Weights -->
+    <div id="notificationModalPositive" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-bold mb-4 text-center">Notification</h2>
+            <p class="mb-4 text-center">The weights have been adjusted to sum to 1.</p>
+            <div class="flex justify-center">
+                <button onclick="closeModal('notificationModalPositive')" class="px-4 py-2 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-700">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Modal for Negative Weights -->
+    <div id="notificationModalNegative" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-bold mb-4 text-center">Warning</h2>
+            <p class="mb-4 text-center">Both weights must be positive.</p>
+            <div class="flex justify-center">
+                <button onclick="closeModal('notificationModalNegative')" class="px-4 py-2 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-700">OK</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -118,10 +143,10 @@
             const primaryWeightRow = document.getElementById('primary-weight-row');
             const secondaryWeightRow = document.getElementById('secondary-weight-row');
             const criteriaCheckboxes = document.querySelectorAll('input[name="criteria[]"]');
-        
+            
             function toggleWeightFields() {
                 const selectedMethod = methodDropdown.options[methodDropdown.selectedIndex].text;
-                if (selectedMethod !== 'PM') {
+                if (selectedMethod !== 'WASPAS') {
                     primaryWeightRow.innerHTML = '<td class="border px-4 py-2">Primary Weight</td><td class="border px-4 py-2">-</td>';
                     secondaryWeightRow.innerHTML = '<td class="border px-4 py-2">Secondary Weight</td><td class="border px-4 py-2">-</td>';
                 } else {
@@ -148,6 +173,58 @@
                     }
                 });
             });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const primaryWeightInput = document.querySelector("input[name='primary_weight']");
+            const secondaryWeightInput = document.querySelector("input[name='secondary_weight']");
+            const positiveModal = document.getElementById('notificationModalPositive');
+            const negativeModal = document.getElementById('notificationModalNegative');
+
+            function showModal(modal) {
+                modal.classList.remove('hidden');
+            }
+
+            function closeModal(modalId) {
+                const modal = document.getElementById(modalId);
+                modal.classList.add('hidden');
+            }
+
+            function validateWeights() {
+                const primaryWeight = parseFloat(primaryWeightInput.value);
+                const secondaryWeight = parseFloat(secondaryWeightInput.value);
+
+                if (isNaN(primaryWeight) || isNaN(secondaryWeight)) {
+                    return; // If either input is not a number, do nothing.
+                }
+
+                if (primaryWeight < 0 || secondaryWeight < 0) {
+                    showModal(negativeModal);
+                    return;
+                }
+
+                const total = primaryWeight + secondaryWeight;
+
+                if (total !== 1) {
+                    const totalSementara = primaryWeight + secondaryWeight;
+                    const newPrimaryWeight = primaryWeight / totalSementara;
+                    const newSecondaryWeight = secondaryWeight / totalSementara;
+                    
+                    primaryWeightInput.value = newPrimaryWeight.toFixed(2);
+                    secondaryWeightInput.value = newSecondaryWeight.toFixed(2);
+
+                    showModal(positiveModal);
+                }
+            }
+
+            primaryWeightInput.addEventListener("input", validateWeights);
+            secondaryWeightInput.addEventListener("input", validateWeights);
+
+            // Close modal on "OK" button click
+            document.querySelector('#notificationModalPositive button').addEventListener('click', () => closeModal('notificationModalPositive'));
+            document.querySelector('#notificationModalNegative button').addEventListener('click', () => closeModal('notificationModalNegative'));
         });
     </script>
     
