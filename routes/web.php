@@ -39,8 +39,6 @@ Route::get('/method', function () {
     return view('/data/method', ['title' => 'Method List', 'total_method' => DSS_Method::all()]);
 });
 
-
-
 Route::get('/alternative/{alternative_id}/criteria/{criteria_id}', [AlternativeCriteriaController::class, 'show'])->name('alternative.criteria.show');
 
 Route::get('/criteria', function () {
