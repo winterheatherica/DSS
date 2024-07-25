@@ -11,7 +11,7 @@ class AlternativeController extends Controller
     public function index()
     {
         $title = 'Alternative List';
-        $total_alternative = Alternative::paginate(5);
+        $total_alternative = Alternative::paginate(8);
         return view('data.alternative', compact('title', 'total_alternative'));
     }
 

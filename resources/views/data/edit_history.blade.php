@@ -125,22 +125,21 @@
         </form>
     </div>
 
-    <!-- Notification Modal for Positive Weights -->
     <div id="notificationModalPositive" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="bg-white rounded-lg shadow-lg p-6">
             <h2 class="text-xl font-bold mb-4 text-center">Notification</h2>
-            <p class="mb-4 text-center">The weights have been adjusted to sum to 1.</p>
+            <p class="mb-4 text-center">Jumlah WSM dan WPM harus 1.</p>
+            <p class="mb-4 text-center">Normalisasi Value WSM dan WPM.</p>
             <div class="flex justify-center">
                 <button onclick="closeModal('notificationModalPositive')" class="px-4 py-2 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-700">OK</button>
             </div>
         </div>
     </div>
 
-    <!-- Notification Modal for Negative Weights -->
     <div id="notificationModalNegative" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="bg-white rounded-lg shadow-lg p-6">
             <h2 class="text-xl font-bold mb-4 text-center">Warning</h2>
-            <p class="mb-4 text-center">Both weights must be positive.</p>
+            <p class="mb-4 text-center">Kedua Nilai harus positif.</p>
             <div class="flex justify-center">
                 <button onclick="closeModal('notificationModalNegative')" class="px-4 py-2 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-700">OK</button>
             </div>
@@ -198,10 +197,12 @@
                 const secondaryWeight = parseFloat(secondaryWeightInput.value);
 
                 if (isNaN(primaryWeight) || isNaN(secondaryWeight)) {
-                    return; // If either input is not a number, do nothing.
+                    return;
                 }
 
                 if (primaryWeight < 0 || secondaryWeight < 0) {
+                    primaryWeightInput.value = '';
+                    secondaryWeightInput.value = '';
                     showModal(negativeModal);
                     return;
                 }
@@ -209,10 +210,9 @@
                 const total = primaryWeight + secondaryWeight;
 
                 if (total !== 1) {
-                    const totalSementara = primaryWeight + secondaryWeight;
-                    const newPrimaryWeight = primaryWeight / totalSementara;
-                    const newSecondaryWeight = secondaryWeight / totalSementara;
-                    
+                    const newPrimaryWeight = primaryWeight / total;
+                    const newSecondaryWeight = secondaryWeight / total;
+
                     primaryWeightInput.value = newPrimaryWeight.toFixed(2);
                     secondaryWeightInput.value = newSecondaryWeight.toFixed(2);
 
@@ -220,12 +220,12 @@
                 }
             }
 
-            primaryWeightInput.addEventListener("input", validateWeights);
-            secondaryWeightInput.addEventListener("input", validateWeights);
+            primaryWeightInput.addEventListener("blur", validateWeights);
+            secondaryWeightInput.addEventListener("blur", validateWeights);
 
-            // Close modal on "OK" button click
             document.querySelector('#notificationModalPositive button').addEventListener('click', () => closeModal('notificationModalPositive'));
             document.querySelector('#notificationModalNegative button').addEventListener('click', () => closeModal('notificationModalNegative'));
         });
-    </script>
+    </script> 
+    
 </x-layout>

@@ -45,10 +45,10 @@ class CalculationController extends Controller
 
         $history = new History();
         $history->method_id = $request->input('method_id');
-        $history->user_id = 1; // Anggap user_id = 1
+        $history->user_id = 1; // Assuming user_id 1 for example
         $history->case_name = $request->input('case_name');
-        $history->primary_weight = $request->input('primary_weight') == '-' ? null : $request->input('primary_weight');
-        $history->secondary_weight = $request->input('secondary_weight') == '-' ? null : $request->input('secondary_weight');
+        $history->primary_weight = $request->input('primary_weight') ?: null;
+        $history->secondary_weight = $request->input('secondary_weight') ?: null;
         $history->save();
 
         $history_id = $history->history_id;
@@ -57,8 +57,8 @@ class CalculationController extends Controller
             $alternativeProportion = new Alternative_Proportion();
             $alternativeProportion->history_id = $history_id;
             $alternativeProportion->alternative_id = $alternative_id;
-            $alternativeProportion->final_score = null;
-            $alternativeProportion->final_rank = null;
+            $alternativeProportion->final_score = null; // Initialize as needed
+            $alternativeProportion->final_rank = null; // Initialize as needed
             $alternativeProportion->save();
         }
 
@@ -71,12 +71,11 @@ class CalculationController extends Controller
                 $criteriaProportion->history_id = $history_id;
                 $criteriaProportion->criteria_id = $criteria_id;
                 $criteriaProportion->criteria_value = $criteriaValues[$criteria_id];
-                $criteriaProportion->criteria_priority = null; // Atau sesuai dengan logika Anda
+                $criteriaProportion->criteria_priority = null; // Initialize as needed
                 $criteriaProportion->save();
             }
         }
 
-        return redirect()->route('calculation.form')->with('success', 'Calculation stored successfully!');
+        return redirect()->route('history.show', ['history_id' => $history_id])->with('success', 'Calculation stored successfully!');
     }
-
 }

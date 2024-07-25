@@ -12,7 +12,7 @@ class CriteriaController extends Controller
     {
         $title = 'Criteria List';
         $currentPage = $request->input('page', 1);
-        $total_criteria = Criteria::paginate(6);
+        $total_criteria = Criteria::paginate(8);
         return view('data.criteria', compact('title', 'total_criteria', 'currentPage'));
     }
 
