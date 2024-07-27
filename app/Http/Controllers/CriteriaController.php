@@ -16,6 +16,21 @@ class CriteriaController extends Controller
         return view('data.criteria', compact('title', 'total_criteria', 'currentPage'));
     }
 
+    public function create()
+    {
+        return view('data.add_criteria', ['title' => 'Add Criteria Page', 'total_criteria' => Criteria::all()]);
+    }
+
+    public function store(Request $request)
+    {
+        $criteria = new Criteria;
+        $criteria->criteria_name = $request->input('criteria_name');
+        $criteria->criteria_status = $request->input('criteria_status');
+        $criteria->save();
+
+        return redirect('/add_criteria')->with('success', 'Criteria added successfully!');
+    }
+
     public function updateName(Request $request)
     {
         $criteria_id = $request->input('criteria_id');
@@ -49,6 +64,29 @@ class CriteriaController extends Controller
         DB::table('tb_criteria')->where('criteria_id', $id)->delete();
         $currentPage = $request->input('page', 1);
         return redirect()->route('criteria.index', ['page' => $currentPage])->with('success', 'Criteria deleted successfully!');
+    }
+
+    public function show($id)
+    {
+        $criteriaDetail = DB::table('tb_criteria')
+            ->where('criteria_id', $id)
+            ->first();
+        
+        $criteria = DB::table('tb_alternative')
+            ->leftJoin('tb_alternative_criteria', function($join) use ($id) {
+                $join->on('tb_alternative.alternative_id', '=', 'tb_alternative_criteria.alternative_id')
+                     ->where('tb_alternative_criteria.criteria_id', '=', $id);
+            })
+            ->select('tb_alternative.alternative_id', 'tb_alternative.alternative_name', 'tb_alternative_criteria.alternative_criteria_value')
+            ->get();
+
+        $title = "Criteria {$criteriaDetail->criteria_name} (" . ($criteriaDetail->criteria_status == 'b' ? 'Benefit)' : 'Cost)');
+
+        return view('data.detailed_criteria', [
+            'title' => $title,
+            'criteria' => $criteria,
+            'criteria_id' => $id
+        ]);
     }
 
 }
