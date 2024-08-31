@@ -8,8 +8,8 @@
             <div class="hidden md:block">
                 <div class="ml-10 flex items-baseline space-x-4">
                 <x-nav-link href="/" :active="request()->is('/')">Home</x-nav-link>
-                <x-nav-link href="/about" :active="request()->is('about')">About</x-nav-link>
-                <x-nav-link href="/post" :active="request()->is('post') || request()->is('post/*')">Post</x-nav-link>
+                {{-- <x-nav-link href="/about" :active="request()->is('about')">About</x-nav-link>
+                <x-nav-link href="/post" :active="request()->is('post') || request()->is('post/*')">Post</x-nav-link> --}}
                 <x-nav-link href="/method" :active="request()->is('method') || request()->is('method/*')">Method</x-nav-link>
                 <x-nav-link href="/history" :active="request()->is('history') || request()->is('history/*')">History</x-nav-link>
                 <x-nav-link href="/criteria" :active="request()->is('criteria') || request()->is('criteria/*')">Criteria</x-nav-link>
