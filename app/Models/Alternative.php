@@ -8,6 +8,7 @@ class Alternative extends Model
 {
     protected $table = 'tb_alternative';
     protected $primaryKey = 'alternative_id';
+    public $incrementing = true;
     public $timestamps = false;
 
     public function alternative_proportion()
